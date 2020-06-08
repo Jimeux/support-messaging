@@ -1,0 +1,107 @@
+{
+  "summaries": [
+    {"userId": 1, "name": "Nyanko McNyanderson", "avatar": "http://placekitten.com/170/170", "unreadCount": 3, "lastMessagePreview": "Please help me!",  "lastSendTime": "2020-06-07T01:15:30.000Z"},
+    {"userId": 2, "name": "Nyansuke Nyanamoto", "avatar": "http://placekitten.com/180/180", "unreadCount": 1, "lastMessagePreview": "I'm having some issues with my credit card.", "lastSendTime": "2020-06-05T15:23:30.000Z"},
+    {"userId": 3, "name": "Nyaa Nyakamura", "avatar": "http://placekitten.com/150/150", "unreadCount": 0, "lastMessagePreview": "I really don't know what I'm doing. Can you explain again?", "lastSendTime": "2020-06-02T07:29:30.000Z"}
+  ],
+
+  "users": [
+    {
+      "id": 1,
+      "name": "Nyanko McNyanderson",
+      "avatar": "http://placekitten.com/170/170",
+      "location": "Tokyo",
+      "gender": "Male",
+      "registrationDate": "2020-06-05T15:23:30.000Z",
+      "profile": "Depending on the nature of the project you are working on, you may like to include a characteristics gauge. This will allow you to easily see the differences between each of your different profiles. The gauge can be a simple line that rates a participant from low to high. You can add the characteristics depending on what is relevant to your project.",
+      "notes": "Your profiles will represent the shared experiences of a group of users. You should bring together user attitudes and behaviours in relation to a product or service. You can also include demographic information about the individual.\n\nYou can present your user profiles in a range of different ways using content that is relevant to the project. Below are some examples of types of content."
+    },
+    {
+      "id": 2,
+      "name": "Nyansuke Nyanamoto", "avatar": "http://placekitten.com/180/180",
+      "location": "Mie",
+      "gender": "Male",
+      "registrationDate": "2020-04-05T15:23:30.000Z",
+      "profile": "In Denver, players and coaches from the Broncos football team joined a march from the state capitol to Civic Center Park downtown. “Your voice is heavy, and it matters,” the fifth-year safety Justin Simmons told the crowd. The NFL in 2016 sidelined Colin Kaepernick – the former quarterback of the San Francisco 49ers – for leading protests against police brutality. But as more players spoke out following the killing of Floyd, the NFL commissioner issued an apology.",
+      "notes": "Harlem is extremely significant when it comes to talking about the disproportionate impact on black and brown communities of so many things – for example, Covid-19 and police surveillance,” said Jacquelyn Martell, 33, one of the protest organizers. “But part of this movement is to bring communities together and ameliorate divisions brought forth by systemic racism and bring some healing as well."
+    },
+    {
+      "id": 3,
+      "name": "Nyaa Nyakamura", "avatar": "http://placekitten.com/150/150",
+      "location": "Chiba",
+      "gender": "Female",
+      "registrationDate": "2020-05-23T15:23:30.000Z",
+      "profile": "The week had seen incremental victories in the Floyd case, with charges announced against three former police officers who were present at his death, while charges against the officer who knelt on his neck were elevated to second-degree murder. In Minneapolis, marchers were joined by the US congresswoman Ilhan Omar. “The Minneapolis police department is rotten to the root,” she told the crowd, “and so when we dismantle it, we get rid of that cancer and we allow for something beautiful to rise.",
+      "notes": "You’ve read 267 articles in the last six months. We believe every one of us deserves equal access to quality news and measured explanation. So, unlike many others, we made a different choice: to keep Guardian journalism open for all, regardless of where they live or what they can afford to pay. This would not be possible without financial contributions from our readers, who now support our work from 180 countries around the world.\n\nWe have upheld our editorial independence in the face of the disintegration of traditional media – with social platforms giving rise to misinformation, the seemingly unstoppable rise of big tech and independent voices being squashed by commercial ownership. The Guardian’s independence means we can set our own agenda and voice our own opinions. Our journalism is free from commercial and political bias – never influenced by billionaire owners or shareholders. This makes us different. It means we can challenge the powerful without fear and give a voice to those less heard."
+    }
+  ],
+
+  "messages": [
+    { "id": 1, "title": "json-server", "author": "typicode" },
+
+    {"id": 1, "userId": 1, "fromUser": true, "avatar": "http://placekitten.com/170/170", "uuid": "1234-5678-9101-1314", "text": "Hello", "sendTime": "2020-05-23T23:59:30.000Z"},
+    {"id": 2, "userId": 1, "fromUser": true, "avatar": "http://placekitten.com/170/170", "uuid": "1234-5678-9101-1315", "text": "How are you", "sendTime": "2020-05-23T23:59:31.000Z"},
+    {"id": 3, "userId": 1, "fromUser": true, "avatar": "http://placekitten.com/170/170", "uuid": "1234-5678-9101-1314", "text": "My friend 1", "sendTime": "2020-06-02T07:29:30.000Z"},
+    {"id": 4, "userId": 1, "fromUser": false, "avatar": "http://placekitten.com/170/170", "uuid": "1234-5678-9101-1315", "text": "My friend 2", "sendTime": "2020-06-02T07:29:31.000Z"},
+    {"id": 5, "userId": 1, "fromUser": true, "avatar": "http://placekitten.com/170/170", "uuid": "1234-5678-9101-1315", "text": "My friend 3", "sendTime": "2020-06-02T07:29:32.000Z"},
+    {"id": 6, "userId": 1, "fromUser": false, "avatar": "http://placekitten.com/170/170", "uuid": "1234-5678-9101-1314", "text": "My friend 4", "sendTime": "2020-06-02T07:29:33.000Z"},
+    {"id": 7, "userId": 1, "fromUser": true, "avatar": "http://placekitten.com/170/170", "uuid": "1234-5678-9101-1314", "text": "My friend 5", "sendTime": "2020-06-02T07:29:34.000Z"},
+    {"id": 8, "userId": 1, "fromUser": true, "avatar": "http://placekitten.com/170/170", "uuid": "1234-5678-9101-1315", "text": "My friend 6", "sendTime": "2020-06-02T07:29:35.000Z"},
+    {"id": 9, "userId": 1, "fromUser": false, "avatar": "http://placekitten.com/170/170", "uuid": "1234-5678-9101-1315", "text": "My friend 7", "sendTime": "2020-06-02T07:29:36.000Z"},
+    {"id": 10, "userId": 1, "fromUser": true, "avatar": "http://placekitten.com/170/170", "uuid": "1234-5678-9101-1314", "text": "My friend 8 ", "sendTime": "2020-06-04T19:57:37.000Z"},
+    {"id": 11, "userId": 1, "fromUser": true, "avatar": "http://placekitten.com/170/170", "uuid": "1234-5678-9101-1315", "text": "My friend 9 ", "sendTime": "2020-06-04T19:57:38.000Z"},
+    {"id": 12, "userId": 1, "fromUser": false, "avatar": "http://placekitten.com/170/170", "uuid": "1234-5678-9101-1314", "text": "My friend 10", "sendTime": "2020-06-04T19:57:39.000Z"},
+    {"id": 13, "userId": 1, "fromUser": false, "avatar": "http://placekitten.com/170/170", "uuid": "1234-5678-9101-1315", "text": "My friend 11", "sendTime": "2020-06-04T19:57:40.000Z"},
+    {"id": 14, "userId": 1, "fromUser": true, "avatar": "http://placekitten.com/170/170", "uuid": "1234-5678-9101-1314", "text": "My friend 12", "sendTime": "2020-06-04T19:57:41.000Z"},
+    {"id": 15, "userId": 1, "fromUser": false, "avatar": "http://placekitten.com/170/170", "uuid": "1234-5678-9101-1314", "text": "My friend 13", "sendTime": "2020-06-04T19:57:42.000Z"},
+    {"id": 16, "userId": 1, "fromUser": false, "avatar": "http://placekitten.com/170/170", "uuid": "1234-5678-9101-1315", "text": "My friend 14", "sendTime": "2020-06-04T19:57:43.000Z"},
+    {"id": 17, "userId": 1, "fromUser": false, "avatar": "http://placekitten.com/170/170", "uuid": "1234-5678-9101-1314", "text": "My friend 17", "sendTime": "2020-06-04T19:57:44.000Z"},
+    {"id": 18, "userId": 1, "fromUser": true, "avatar": "http://placekitten.com/170/170", "uuid": "1234-5678-9101-1315", "text": "My friend 18", "sendTime": "2020-06-04T19:57:45.000Z"},
+    {"id": 19, "userId": 1, "fromUser": true, "avatar": "http://placekitten.com/170/170", "uuid": "1234-5678-9101-1314", "text": "My friend 19", "sendTime": "2020-06-04T19:57:56.000Z"},
+    {"id": 20, "userId": 1, "fromUser": false, "avatar": "http://placekitten.com/170/170", "uuid": "1234-5678-9101-1315", "text": "My friend 20", "sendTime": "2020-06-04T19:57:57.000Z"},
+    {"id": 21, "userId": 1, "fromUser": true, "avatar": "http://placekitten.com/170/170", "uuid": "1234-5678-9101-1315", "text": "My friend 21", "sendTime": "2020-06-04T19:57:58.000Z"},
+    {"id": 22, "userId": 1, "fromUser": false, "avatar": "http://placekitten.com/170/170", "uuid": "1234-5678-9101-1314", "text": "My friend 22", "sendTime": "2020-06-04T19:57:59.000Z"},
+    {"id": 23, "userId": 1, "fromUser": true, "avatar": "http://placekitten.com/170/170", "uuid": "1234-5678-9101-1315", "text": "My friend 23", "sendTime": "2020-06-04T19:58:32.100Z"},
+    {"id": 24, "userId": 1, "fromUser": false, "avatar": "http://placekitten.com/170/170", "uuid": "1234-5678-9101-1315", "text": "My friend 24", "sendTime": "2020-06-04T19:58:32.200Z"},
+    {"id": 25, "userId": 1, "fromUser": false, "avatar": "http://placekitten.com/170/170", "uuid": "1234-5678-9101-1315", "text": "My friend 25", "sendTime": "2020-06-04T19:58w:37.300Z"},
+    {"id": 26, "userId": 1, "fromUser": true, "avatar": "http://placekitten.com/170/170", "uuid": "1234-5678-9101-1314", "text": "My friend 26", "sendTime": "2020-06-05T15:23:30.000Z"},
+    {"id": 27, "userId": 1, "fromUser": true, "avatar": "http://placekitten.com/170/170", "uuid": "1234-5678-9101-1315", "text": "My friend 27", "sendTime": "2020-06-05T15:23:31.000Z"},
+    {"id": 28, "userId": 1, "fromUser": true, "avatar": "http://placekitten.com/170/170", "uuid": "1234-5678-9101-1314", "text": "More than 140 Zuckerberg-funded scientists call on Facebook to rein in Trump", "sendTime": "2020-06-05T15:23:32.000Z"},
+    {"id": 29, "userId": 1, "fromUser": true, "avatar": "http://placekitten.com/170/170", "uuid": "1234-5678-9101-1315", "text": "My friend 29", "sendTime": "2020-06-05T15:23:33.000Z"},
+    {"id": 30, "userId": 1, "fromUser": true, "avatar": "http://placekitten.com/170/170", "uuid": "1234-5678-9101-1314", "text": "High-profile researchers urge CEO not to let president spread ‘misinformation and incendiary statements’ amid protests over racial injustice", "sendTime": "2020-06-05T15:23:34.000Z"},
+
+    {"id": 31, "userId": 2, "fromUser": false, "avatar": "http://placekitten.com/180/180", "text": "My friend", "sendTime": "2020-06-05T15:23:30.000Z"},
+    {"id": 32, "userId": 2, "fromUser": true, "avatar": "http://placekitten.com/180/180", "text": "My friend", "sendTime": "2020-06-05T15:23:30.000Z"},
+    {"id": 33, "userId": 2, "fromUser": false, "avatar": "http://placekitten.com/180/180", "text": "My friend", "sendTime": "2020-06-05T15:23:30.000Z"},
+    {"id": 34, "userId": 2, "fromUser": false, "avatar": "http://placekitten.com/180/180", "text": "My friend", "sendTime": "2020-06-05T15:23:30.000Z"},
+    {"id": 35, "userId": 2, "fromUser": true, "avatar": "http://placekitten.com/180/180", "text": "My friend", "sendTime": "2020-06-05T15:23:30.000Z"},
+    {"id": 36, "userId": 2, "fromUser": false, "avatar": "http://placekitten.com/180/180", "text": "My friend", "sendTime": "2020-06-05T15:23:30.000Z"},
+    {"id": 37, "userId": 2, "fromUser": true, "avatar": "http://placekitten.com/180/180", "text": "My friend", "sendTime": "2020-06-05T15:23:30.000Z"},
+    {"id": 38, "userId": 2, "fromUser": false, "avatar": "http://placekitten.com/180/180", "text": "My friend", "sendTime": "2020-06-05T15:23:30.000Z"},
+    {"id": 39, "userId": 2, "fromUser": true, "avatar": "http://placekitten.com/180/180", "text": "My friend", "sendTime": "2020-06-05T15:23:30.000Z"},
+    {"id": 40, "userId": 2, "fromUser": false, "avatar": "http://placekitten.com/180/180", "text": "My friend", "sendTime": "2020-06-05T15:23:30.000Z"},
+    {"id": 41, "userId": 2, "fromUser": false, "avatar": "http://placekitten.com/180/180", "text": "My friend", "sendTime": "2020-06-05T15:23:30.000Z"},
+    {"id": 42, "userId": 2, "fromUser": false, "avatar": "http://placekitten.com/180/180", "text": "My friend", "sendTime": "2020-06-05T15:23:30.000Z"},
+    {"id": 43, "userId": 2, "fromUser": true, "avatar": "http://placekitten.com/180/180", "text": "My friend", "sendTime": "2020-06-05T15:23:30.000Z"},
+    {"id": 44, "userId": 2, "fromUser": false, "avatar": "http://placekitten.com/180/180", "text": "My friend ***", "sendTime": "2020-06-06T11:15:30.000Z"},
+    {"id": 45, "userId": 2, "fromUser": true, "avatar": "http://placekitten.com/180/180", "text": "My friend", "sendTime": "2020-06-06T11:15:30.000Z"},
+    {"id": 46, "userId": 2, "fromUser": false, "avatar": "http://placekitten.com/180/180", "text": "Hundreds of thousands took to the streets on a day that saw grief and determination punctuated by moments of levity", "sendTime": "2020-06-06T11:15:30.000Z"},
+    {"id": 47, "userId": 2, "fromUser": false, "avatar": "http://placekitten.com/180/180", "text": "Create a db.json file with some data", "sendTime": "2020-06-06T11:15:30.000Z"},
+    {"id": 48, "userId": 2, "fromUser": true, "avatar": "http://placekitten.com/180/180", "text": "Get a full fake REST API with zero coding in less than 30 seconds (seriously)", "sendTime": "2020-06-06T11:15:30.000Z"},
+
+    {"id": 49, "userId": 3, "fromUser": true, "avatar": "http://placekitten.com/150/150", "text": "My friend", "sendTime": "2020-06-06T11:15:30.000Z"},
+    {"id": 50, "userId": 3, "fromUser": true, "avatar": "http://placekitten.com/150/150", "text": "My friend", "sendTime": "2020-06-06T11:15:30.000Z"},
+    {"id": 51, "userId": 3, "fromUser": true, "avatar": "http://placekitten.com/150/150", "text": "My friend", "sendTime": "2020-06-06T11:15:30.000Z"},
+    {"id": 52, "userId": 3, "fromUser": false, "avatar": "http://placekitten.com/150/150", "text": "My friend", "sendTime": "2020-06-07T00:15:30.000Z"},
+    {"id": 53, "userId": 3, "fromUser": true, "avatar": "http://placekitten.com/150/150", "text": "My friend", "sendTime": "2020-06-07T00:15:30.000Z"},
+    {"id": 54, "userId": 3, "fromUser": true, "avatar": "http://placekitten.com/150/150", "text": "My friend", "sendTime": "2020-06-07T00:15:30.000Z"},
+    {"id": 55, "userId": 3, "fromUser": false, "avatar": "http://placekitten.com/150/150", "text": "My friend", "sendTime": "2020-06-07T00:15:30.000Z"},
+    {"id": 56, "userId": 3, "fromUser": true, "avatar": "http://placekitten.com/150/150", "text": "My friend", "sendTime": "2020-06-07T00:15:30.000Z"},
+    {"id": 57, "userId": 3, "fromUser": true, "avatar": "http://placekitten.com/150/150", "text": "My friend", "sendTime": "2020-06-07T00:15:30.000Z"},
+    {"id": 57, "userId": 3, "fromUser": true, "avatar": "http://placekitten.com/150/150", "text": "Demonstrations, now in their second weekend, were largely peaceful – and included moments of levity and jubilance. It was a notable shift from the weekend prior, when police beat back demonstrators with force, using teargas and pepper spray to suppress the unrest.", "sendTime": "2020-06-07T00:15:30.000Z"},
+    {"id": 58, "userId": 3, "fromUser": false, "avatar": "http://placekitten.com/150/150", "text": "My friend 58", "sendTime": "2020-06-07T01:15:30.000Z"},
+    {"id": 59, "userId": 3, "fromUser": true, "avatar": "http://placekitten.com/150/150", "text": "My friend my friend why is 59 on a new line", "sendTime":  "2020-06-07T01:15:30.000Z"}
+
+
+  ]
+}
