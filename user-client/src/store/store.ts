@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex, {StoreOptions} from 'vuex'
 import messages from "@/store/modules/messages";
+import users from "@/store/modules/users";
 
 Vue.use(Vuex)
 
@@ -15,7 +16,8 @@ export interface RootState {
 
 const store: StoreOptions<RootState> = {
   modules: {
-    messages
+    messages,
+    users
   },
 
   state: {
@@ -31,7 +33,7 @@ const store: StoreOptions<RootState> = {
   },
 
   actions: {
-    setSnackbar({commit, state}, {content, klass}) {
+    setSnackbar({commit}, {content, klass}) {
       commit(RootMutations.SET_SNACKBAR, {content, klass});
     },
     clearSnackbar({commit}) {

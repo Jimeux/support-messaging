@@ -1,20 +1,20 @@
 <template>
-  <div v-if="messages.activeUser != null" :style="`overflow-y: auto; height: ` + height + `px;`">
+  <div v-if="users.activeUser != null" :style="`overflow-y: auto; height: ` + height + `px;`">
     <div class="pa-3" style="text-align: center; border-bottom: 1px solid rgba(255, 255, 255, 0.12);">
       <v-list-item-avatar size="100px">
-        <v-img :src="messages.activeUser.avatar"></v-img>
+        <v-img :src="users.activeUser.avatar"></v-img>
       </v-list-item-avatar>
-      <div class="mt-2 mb-1">{{messages.activeUser.name}}</div>
+      <div class="mt-2 mb-1">{{users.activeUser.name}}</div>
       <small class="mb-2 grey--text">Active 10 minutes ago</small>
     </div>
     <div style="border-bottom: 1px solid rgba(255, 255, 255, 0.12);" class="pl-1">
       <v-list style="background: transparent;">
         <v-list-item dense
                      v-for="item in [
-                          {title: messages.activeUser.location, icon: 'location_on', color: 'pink'},
-                          {title: messages.activeUser.id, icon: 'fingerprint', color: 'primary'},
-                          {title: messages.activeUser.gender, icon: 'wc', color: 'primary'},
-                          {title: messages.activeUser.registrationDate.split('T')[0], icon: 'event', color: 'primary'},
+                          {title: users.activeUser.location, icon: 'location_on', color: 'pink'},
+                          {title: users.activeUser.id, icon: 'fingerprint', color: 'primary'},
+                          {title: users.activeUser.gender, icon: 'wc', color: 'primary'},
+                          {title: users.activeUser.registrationDate.split('T')[0], icon: 'event', color: 'primary'},
                       ]"
                      :key="item.title"
         >
@@ -37,7 +37,7 @@
             </template>
           </v-expansion-panel-header>
           <v-expansion-panel-content>
-            {{messages.activeUser.profile}}}
+            {{users.activeUser.profile}}}
           </v-expansion-panel-content>
         </v-expansion-panel>
 
@@ -49,7 +49,7 @@
             </template>
           </v-expansion-panel-header>
           <v-expansion-panel-content>
-            {{messages.activeUser.notes}}}
+            {{users.activeUser.notes}}}
           </v-expansion-panel-content>
         </v-expansion-panel>
       </v-expansion-panels>
@@ -60,16 +60,16 @@
 <script lang="ts">
 import {Component, Vue} from 'vue-property-decorator';
 import {mapActions, mapState} from "vuex";
-import {MessageState, MessageNamespace} from "@/store/modules/messages";
+import {UserNamespace, UserState} from "@/store/modules/users";
 
 @Component({
   components: {
   },
-  computed: {...mapState([MessageNamespace])},
-  methods: {...mapActions(MessageNamespace, [])}
+  computed: {...mapState([UserNamespace])},
+  methods: {...mapActions(UserNamespace, [])}
 })
 export default class MessageUserInfoPane extends Vue {
-  messages!: MessageState;
+  users!: UserState;
   height = 500;
 
   mounted() {

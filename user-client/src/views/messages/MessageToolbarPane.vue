@@ -1,10 +1,10 @@
 <template>
-  <v-toolbar flat v-if="messages.activeUserSummary" style="background: transparent;">
+  <v-toolbar flat v-if="users.activeUserSummary" style="background: transparent;">
     <v-list-item-avatar size="30px">
-      <v-img :src="messages.activeUserSummary.avatar"></v-img>
+      <v-img :src="users.activeUserSummary.avatar"></v-img>
     </v-list-item-avatar>
     <v-toolbar-title style="font-size: 110%;">
-      {{messages.activeUserSummary.name}}
+      {{users.activeUserSummary.name}}
     </v-toolbar-title>
     <v-spacer></v-spacer>
     <v-btn icon>
@@ -21,15 +21,15 @@
 
 <script lang="ts">
 import {Component, Vue} from 'vue-property-decorator';
-import {mapActions, mapState} from "vuex";
-import {MessageState, MessageNamespace} from "@/store/modules/messages";
+import {mapState} from "vuex";
+import {MessageState} from "@/store/modules/messages";
+import {UserNamespace} from "@/store/modules/users";
 
 @Component({
   components: {},
-  computed: {...mapState([MessageNamespace])},
-  methods: {...mapActions(MessageNamespace, [])}
+  computed: {...mapState([UserNamespace])},
 })
 export default class MessageToolbarPane extends Vue {
-  messages!: MessageState;
+  users!: MessageState;
 }
 </script>

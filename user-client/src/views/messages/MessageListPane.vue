@@ -1,5 +1,5 @@
 <template>
-  <v-container class="pa-0" v-if="messages.activeUserSummary">
+  <v-container class="pa-0" v-if="users.activeUserSummary">
     <MessageList :messages="messages.messages"
                  :onScrollToTop="onScrollToTop"
                  :loadingPage="messages.loadingPage"
@@ -14,34 +14,43 @@ import {mapActions, mapState} from "vuex";
 import {MessageState, MessageNamespace} from "@/store/modules/messages";
 import MessageSendBox from "@/components/messages/MessageSendBox.vue";
 import MessageList from "@/components/messages/MessageList.vue";
+import {UserNamespace, UserState} from "@/store/modules/users";
 
 @Component({
   components: {
     MessageList,
     MessageSendBox,
   },
-  computed: {...mapState([MessageNamespace])},
-  methods: {...mapActions(MessageNamespace, ["sendMessage", "updateLastReadTime", "nextPage"])}
+  computed: {
+    ...mapState([MessageNamespace]),
+    ...mapState([UserNamespace])
+  },
+  methods: {
+    ...mapActions(MessageNamespace, ["sendMessage", "updateLastReadTime", "nextPage"])
+  }
 })
 export default class MessageListPane extends Vue {
+  // state
   messages!: MessageState;
+  users!: UserState;
+  // actions
   sendMessage!: (obj: object) => void;
   updateLastReadTime!: () => void;
   nextPage!: (userId: number) => void;
 
   onScrollToTop() {
-    if (this.messages.activeUser == null || !this.messages.hasMore) {
+    if (this.users.activeUser == null || !this.messages.hasMore) {
       return;
     }
 
-    this.nextPage(this.messages.activeUser?.id);
+    this.nextPage(this.users.activeUser?.id);
   }
 
   onSendMessage(text: string) {
-    if (this.messages.activeUser == null) {
+    if (this.users.activeUser == null) {
       return;
     }
-    this.sendMessage({userId: this.messages.activeUser.id, text: text})
+    this.sendMessage({userId: this.users.activeUser.id, text: text})
   }
 }
 </script>

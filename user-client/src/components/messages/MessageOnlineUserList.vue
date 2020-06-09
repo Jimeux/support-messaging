@@ -3,7 +3,7 @@
     <v-list two-line style="background: transparent;">
       <v-list-item-group v-model="selectedIndex" active-class="primary--text">
         <template v-for="(item, index) in userSummaries">
-          <v-list-item :key="item.userId" class="pl-7" @click="onUserSelected(item.userId)">
+          <v-list-item :key="item.userId" class="pl-7" @click="onSummarySelected(item.userId)">
 
             <template v-slot:default="{}">
 
@@ -51,7 +51,7 @@ export default class MessageOnlineUserList extends Vue {
   @Prop({required: true})
   userSummaries!: Array<UserSummary>;
   @Prop({required: true})
-  onUserSelected!: (id: number) => void;
+  onSummarySelected!: (id: number) => void;
 
   selectedIndex = -1;
   height = 500;

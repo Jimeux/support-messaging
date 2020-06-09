@@ -66,7 +66,7 @@ const userModule: Module<UserState, RootState> = {
 
         commit(mutations.SELECT_USER, found);
 
-        const user = userRepo.fetchUser(id);
+        const user = await userRepo.fetchUser(id);
         commit(mutations.SET_USER, user);
       } catch (err) {
         dispatch("setSnackbar", {content: err.message, klass: "error"}, {root: true})

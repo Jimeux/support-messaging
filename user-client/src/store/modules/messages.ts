@@ -1,7 +1,6 @@
 import {Module} from "vuex";
-import {RootMutations, RootState} from "@/store/store";
+import {RootState} from "@/store/store";
 import Message from "@/data/message";
-import {User, UserSummary} from "@/data/user";
 import MessageRepository from "@/api/messageRepository";
 
 // todo how to inject?
@@ -11,9 +10,6 @@ export const MessageNamespace = "messages";
 
 export interface MessageState {
   messages: Array<Message>;
-  userSummaries: Array<UserSummary>;
-  activeUserSummary: UserSummary | null;
-  activeUser: User | null;
   currentPage: number;
   hasMore: boolean;
   currentMessageId: number | null;
@@ -23,22 +19,15 @@ export interface MessageState {
 enum mutations {
   ADD_MESSAGE = 'ADD_MESSAGE',
   ADD_MESSAGES = 'ADD_MESSAGES',
-
   SAVE_MESSAGE_POSITION = 'SAVE_MESSAGE_POSITION',
-
-  SELECT_USER = 'SELECT_USER',
-  ADD_USER_SUMMARIES = 'ADD_USER_SUMMARIES',
-  SET_USER = 'SET_USER',
-  SET_LOADING_PAGE = 'SET_LOADING_PAGE'
+  SET_LOADING_PAGE = 'SET_LOADING_PAGE',
+  CLEAR_MESSAGES = 'CLEAR_MESSAGES'
 }
 
 const messageModule: Module<MessageState, RootState> = {
   namespaced: true,
 
   state: {
-    activeUserSummary: null,
-    activeUser: null,
-    userSummaries: [],
     messages: [],
     currentPage: 1,
     currentMessageId: null,
@@ -49,6 +38,14 @@ const messageModule: Module<MessageState, RootState> = {
   getters: {},
 
   mutations: {
+    [mutations.CLEAR_MESSAGES](state: MessageState) {
+      // todo initialState?
+      state.messages = [];
+      state.currentPage = 1;
+      state.currentMessageId = null;
+      state.loadingPage = false;
+      state.hasMore = true;
+    },
     [mutations.ADD_MESSAGE](state: MessageState, msg: Message) {
       state.messages = [...state.messages, msg].sort((a, b) => (a.id >= b.id) ? 1 : -1);
     },
@@ -59,24 +56,8 @@ const messageModule: Module<MessageState, RootState> = {
       if (messages.length < 20) //todo limit const
         state.hasMore = false;
     },
-    [mutations.SELECT_USER](state: MessageState, us: UserSummary) {
-      state.activeUserSummary = us;
-
-      // init
-      state.hasMore = true;
-      state.currentPage = 1;
-      state.messages = [];
-      state.currentMessageId = null;
-      state.activeUser = null;
-    },
-    [mutations.SET_USER](state: MessageState, user: User) {
-      state.activeUser = user;
-    },
     [mutations.SAVE_MESSAGE_POSITION](state: MessageState, messageId: number) {
       state.currentMessageId = messageId;
-    },
-    [mutations.ADD_USER_SUMMARIES](state: MessageState, us: Array<UserSummary>) {
-      state.userSummaries = us;
     },
     [mutations.SET_LOADING_PAGE](state: MessageState, loading: boolean) {
       state.loadingPage = loading;
@@ -84,14 +65,6 @@ const messageModule: Module<MessageState, RootState> = {
   },
 
   actions: {
-    async fetchUserSummaries({commit, dispatch}) {
-      try {
-        const us = await msgRepo.fetchUserSummaries();
-        commit(mutations.ADD_USER_SUMMARIES, us);
-      } catch (err) {
-        dispatch("setSnackbar", {content: err.message, klass: "error"}, {root: true});
-      }
-    },
     addMessage({commit}, msg: Message) {
       commit(mutations.ADD_MESSAGE, msg);
     },
@@ -101,23 +74,14 @@ const messageModule: Module<MessageState, RootState> = {
     updateLastReadTime() {
       console.log("updateLastReadTime");
     },
-    async selectUser({commit, state, dispatch}, id: number) {
-      const found = state.userSummaries.find(u => u.userId === id)
-      if (found === undefined) {
-        return;
-        // todo snackbar error
+    async fetchMessages({commit, state, dispatch}, id: number) {
+      try {
+        commit(mutations.CLEAR_MESSAGES);
+        const messages = await msgRepo.fetchMessages(id, state.currentPage);
+        commit(mutations.ADD_MESSAGES, messages);
+      } catch (err) {
+        dispatch("setSnackbar", {content: err.message, klass: "error"}, {root: true})
       }
-
-      commit(mutations.SELECT_USER, found);
-
-      msgRepo.fetchMessages(id, state.currentPage)
-          .then(messages => commit(mutations.ADD_MESSAGES, messages))
-          .catch(err => dispatch("setSnackbar", {content: err.message, klass: "error"}, {root: true}));
-
-      // TODO split out into separate store to run in parallel (including separate loading)
-      msgRepo.fetchUser(id)
-          .then(user => commit(mutations.SET_USER, user))
-          .catch(err => dispatch("setSnackbar", {content: err.message, klass: "error"}, {root: true}));
     },
     async nextPage({commit, dispatch, state}, userId: number) {
       if (state.loadingPage)
