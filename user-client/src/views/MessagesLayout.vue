@@ -1,7 +1,7 @@
 <template>
   <v-container fluid class="pa-0 home">
     <v-row no-gutters>
-      <v-col cols="3" class="pa-0" style="border-right: 1px solid rgba(255, 255, 255, 0.12)">
+      <v-col cols="3" class="pa-0">
         <MessageUsersPane/>
       </v-col>
       <v-col cols="9" class="pa-0">

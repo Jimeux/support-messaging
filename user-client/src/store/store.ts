@@ -4,8 +4,13 @@ import messages from "@/store/modules/messages";
 
 Vue.use(Vuex)
 
+export enum RootMutations {
+  SET_SNACKBAR = 'SET_SNACKBAR',
+}
+
 export interface RootState {
-  fuckYouESLint: string;
+  snackbarContent: string;
+  snackbarClass: string;
 }
 
 const store: StoreOptions<RootState> = {
@@ -14,10 +19,16 @@ const store: StoreOptions<RootState> = {
   },
 
   state: {
-    fuckYouESLint: "fuck off"
+    snackbarContent: "",
+    snackbarClass: "",
   },
 
-  mutations: {},
+  mutations: {
+    [RootMutations.SET_SNACKBAR](state: RootState, {content, klass}) {
+      state.snackbarContent = content;
+      state.snackbarClass = klass;
+    },
+  },
 
   actions: {}
 };

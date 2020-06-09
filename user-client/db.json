@@ -2,7 +2,10 @@
   "summaries": [
     {"userId": 1, "name": "Nyanko McNyanderson", "avatar": "http://placekitten.com/170/170", "unreadCount": 3, "lastMessagePreview": "Please help me!",  "lastSendTime": "2020-06-07T01:15:30.000Z"},
     {"userId": 2, "name": "Nyansuke Nyanamoto", "avatar": "http://placekitten.com/180/180", "unreadCount": 1, "lastMessagePreview": "I'm having some issues with my credit card.", "lastSendTime": "2020-06-05T15:23:30.000Z"},
-    {"userId": 3, "name": "Nyaa Nyakamura", "avatar": "http://placekitten.com/150/150", "unreadCount": 0, "lastMessagePreview": "I really don't know what I'm doing. Can you explain again?", "lastSendTime": "2020-06-02T07:29:30.000Z"}
+    {"userId": 3, "name": "Nyaa Nyakamura", "avatar": "http://placekitten.com/150/150", "unreadCount": 2, "lastMessagePreview": "I really don't know what I'm doing. Can you explain again?", "lastSendTime": "2020-06-02T07:29:30.000Z"},
+    {"userId": 4, "name": "Cat Stevens", "avatar": "http://placekitten.com/160/160", "unreadCount": 0, "lastMessagePreview": "Please help with my credit card stuff.", "lastSendTime": "2020-06-01T07:59:30.000Z"},
+    {"userId": 5, "name": "Catalina Smith", "avatar": "http://placekitten.com/140/140", "unreadCount": 0, "lastMessagePreview": "I don't have a clue how to use anything.", "lastSendTime": "2020-06-01T06:42:30.000Z"},
+    {"userId": 6, "name": "John Smith", "avatar": "http://placekitten.com/120/120", "unreadCount": 0, "lastMessagePreview": "I have a common name.", "lastSendTime": "2020-06-01T07:59:30.000Z"}
   ],
 
   "users": [

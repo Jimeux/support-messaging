@@ -1,5 +1,5 @@
 <template>
-  <div v-if="messages.activeUser != null">
+  <div v-if="messages.activeUser != null" :style="`overflow-y: auto; height: ` + height + `px;`">
     <div class="pa-3" style="text-align: center; border-bottom: 1px solid rgba(255, 255, 255, 0.12);">
       <v-list-item-avatar size="100px">
         <v-img :src="messages.activeUser.avatar"></v-img>
@@ -70,5 +70,23 @@ import {MessageState, MessageNamespace} from "@/store/modules/messages";
 })
 export default class MessageUserInfoPane extends Vue {
   messages!: MessageState;
+  height = 500;
+
+  mounted() {
+    this.setHeight();
+    // todo avoid multiple
+    window.addEventListener('resize', this.setHeight.bind(this));
+  }
+
+  setHeight() {
+    const appBarHeight = this.getHeightByClass('v-app-bar');
+    const toolbarHeight = 64;
+    this.height = window.innerHeight - appBarHeight - toolbarHeight;
+  }
+
+  getHeightByClass(className: string): number {
+    const elements = document.getElementsByClassName(className)
+    return elements.length === 0 ? 0 : (elements[0] as HTMLElement).offsetHeight;
+  }
 }
 </script>

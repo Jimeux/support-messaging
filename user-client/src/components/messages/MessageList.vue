@@ -38,7 +38,7 @@ export default class MessageList extends Vue {
     }
     if (this.init && this.messages.length != 0) {
       this.init = false;
-      this.setHeight();
+      this.setHeight(); // FIXME calling this in updated is dangerous (can create infinite loop)
     }
 
     if (this.currentMessageId != null) {
