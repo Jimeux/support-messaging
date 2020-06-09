@@ -30,7 +30,15 @@ const store: StoreOptions<RootState> = {
     },
   },
 
-  actions: {}
+  actions: {
+    setSnackbar({commit, state}, {content, klass}) {
+      commit(RootMutations.SET_SNACKBAR, {content, klass});
+    },
+    clearSnackbar({commit}) {
+      commit(RootMutations.SET_SNACKBAR, {content: '', klass: ''});
+    }
+
+  }
 };
 
 export default new Vuex.Store<RootState>(store);

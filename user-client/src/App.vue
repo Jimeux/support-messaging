@@ -19,15 +19,21 @@
 
     </v-app-bar>-->
 
-    <v-snackbar v-model="snackbarText" style="max-width: 350px;margin-left: auto;" :timeout="snackbarTimeout" vertical bottom right multi-line :color="snackbarClass" class="mr-10 mb-10">
-      <div style="font-size: 115%;" v-html="snackbarText"></div>
+    <v-snackbar v-model="snackbar" style="max-width: 350px; margin-left: auto;"
+                :timeout="snackbarTimeout"
+                :color="$store.state.snackbarClass"
+                class="mr-10 mb-10"
+                vertical bottom right multi-line>
+      <div style="font-size: 115%;" v-html="$store.state.snackbarContent"></div>
+      <!--todo v-for snackbarContents -->
+      <!--<div style="font-size: 115%;" class="mt-4" v-html="$store.state.snackbarContent"></div>-->
       <div class="d-flex justify-end">
-      <v-btn class="d-flex" text @click="snackbarText = ''">
-        Send Report
-      </v-btn>
-      <v-btn class="d-flex" text @click="snackbarText = ''">
-        Close
-      </v-btn>
+        <v-btn class="d-flex" text @click="clearSnackbar">
+          Send Report
+        </v-btn>
+        <v-btn class="d-flex" text @click="clearSnackbar">
+          Close
+        </v-btn>
       </div>
     </v-snackbar>
 
@@ -45,20 +51,25 @@ import {Component} from "vue-property-decorator";
 // TODO map root state for snackbar
 @Component
 export default class App extends Vue {
-  snackbarText = `Unable to send request. Please verify with the engineering team and try again.`;
-  snackbarClass = "error";
-
   get snackbar(): boolean {
-    return this.snackbarText !== "";
+    return this.$store.state.snackbarContent !== "";
+  }
+
+  set snackbar(val: boolean) {
+    this.$store.dispatch("clearSnackbar");
   }
 
   get snackbarTimeout(): number {
-    switch (this.snackbarClass) {
+    switch (this.$store.state.snackbarClass) {
       case "error":
-        return 20000;
+        return 10000;
       default:
         return 3000;
     }
+  }
+
+  clearSnackbar() {
+    this.$store.dispatch("clearSnackbar");
   }
 
 }

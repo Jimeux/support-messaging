@@ -1,5 +1,5 @@
 import {Module} from "vuex";
-import {RootState} from "@/store/store";
+import {RootMutations, RootState} from "@/store/store";
 import Message from "@/data/message";
 import {User, UserSummary} from "@/data/user";
 import MessageRepository from "@/api/messageRepository";
@@ -84,10 +84,13 @@ const messageModule: Module<MessageState, RootState> = {
   },
 
   actions: {
-    async fetchUserSummaries({commit}) {
-      // todo try/catch
-      const us = await msgRepo.fetchUserSummaries();
-      commit(mutations.ADD_USER_SUMMARIES, us);
+    async fetchUserSummaries({commit, dispatch}) {
+      try {
+        const us = await msgRepo.fetchUserSummaries();
+        commit(mutations.ADD_USER_SUMMARIES, us);
+      } catch (err) {
+        dispatch("setSnackbar", {content: err.message, klass: "error"}, {root: true});
+      }
     },
     addMessage({commit}, msg: Message) {
       commit(mutations.ADD_MESSAGE, msg);
@@ -98,7 +101,7 @@ const messageModule: Module<MessageState, RootState> = {
     updateLastReadTime() {
       console.log("updateLastReadTime");
     },
-    async selectUser({commit, state}, id: number) {
+    async selectUser({commit, state, dispatch}, id: number) {
       const found = state.userSummaries.find(u => u.userId === id)
       if (found === undefined) {
         return;
@@ -106,18 +109,17 @@ const messageModule: Module<MessageState, RootState> = {
       }
 
       commit(mutations.SELECT_USER, found);
-      try {
-        const messages = await msgRepo.fetchMessages(id, state.currentPage);
-        commit(mutations.ADD_MESSAGES, messages);
 
-        const user = await msgRepo.fetchUser(id);
-        commit(mutations.SET_USER, user);
-      } catch (err) {
-        // todo snackbar error
-        console.log(err);
-      }
+      msgRepo.fetchMessages(id, state.currentPage)
+          .then(messages => commit(mutations.ADD_MESSAGES, messages))
+          .catch(err => dispatch("setSnackbar", {content: err.message, klass: "error"}, {root: true}));
+
+      // TODO split out into separate store to run in parallel (including separate loading)
+      msgRepo.fetchUser(id)
+          .then(user => commit(mutations.SET_USER, user))
+          .catch(err => dispatch("setSnackbar", {content: err.message, klass: "error"}, {root: true}));
     },
-    async nextPage({commit, state}, userId: number) {
+    async nextPage({commit, dispatch, state}, userId: number) {
       if (state.loadingPage)
         return; // in progress
 
@@ -130,7 +132,7 @@ const messageModule: Module<MessageState, RootState> = {
         const messages = await msgRepo.fetchMessages(userId, state.currentPage);
         commit(mutations.ADD_MESSAGES, messages);
       } catch (err) {
-        console.log(err); // todo snackbar error
+        dispatch("setSnackbar", {content: err.message, klass: "error"}, {root: true});
       } finally {
         commit(mutations.SET_LOADING_PAGE, false);
       }
