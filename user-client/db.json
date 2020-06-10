@@ -5,7 +5,12 @@
     {"userId": 3, "name": "Nyaa Nyakamura", "avatar": "http://placekitten.com/150/150", "unreadCount": 2, "lastMessagePreview": "I really don't know what I'm doing. Can you explain again?", "lastSendTime": "2020-06-02T07:29:30.000Z"},
     {"userId": 4, "name": "Cat Stevens", "avatar": "http://placekitten.com/160/160", "unreadCount": 0, "lastMessagePreview": "Please help with my credit card stuff.", "lastSendTime": "2020-06-01T07:59:30.000Z"},
     {"userId": 5, "name": "Catalina Smith", "avatar": "http://placekitten.com/140/140", "unreadCount": 0, "lastMessagePreview": "I don't have a clue how to use anything.", "lastSendTime": "2020-06-01T06:42:30.000Z"},
-    {"userId": 6, "name": "John Smith", "avatar": "http://placekitten.com/120/120", "unreadCount": 0, "lastMessagePreview": "I have a common name.", "lastSendTime": "2020-06-01T07:59:30.000Z"}
+    {"userId": 6, "name": "Jeff Catterson", "avatar": "http://placekitten.com/110/110", "unreadCount": 0, "lastMessagePreview": "Hi, I'm Jeff.", "lastSendTime": "2020-06-01T07:19:30.000Z"},
+    {"userId": 7, "name": "Catty McGruffin", "avatar": "http://placekitten.com/240/240", "unreadCount": 0, "lastMessagePreview": "Not to be gruff with you, but...", "lastSendTime": "2020-06-01T07:59:30.000Z"},
+    {"userId": 8, "name": "Frank Catson", "avatar": "http://placekitten.com/230/230", "unreadCount": 0, "lastMessagePreview": "Bonjour, mon animes.", "lastSendTime": "2020-06-01T07:59:30.000Z"},
+    {"userId": 9, "name": "Jake McCatter", "avatar": "http://placekitten.com/105/105", "unreadCount": 0, "lastMessagePreview": "Please please please help.", "lastSendTime": "2020-06-01T07:59:30.000Z"},
+    {"userId": 10, "name": "Jimmy O'Feline", "avatar": "http://placekitten.com/90/90", "unreadCount": 0, "lastMessagePreview": "Top of the cat to ya.", "lastSendTime": "2020-06-01T07:59:30.000Z"},
+    {"userId": 11, "name": "John Smith", "avatar": "http://placekitten.com/80/80", "unreadCount": 0, "lastMessagePreview": "I have a common name.", "lastSendTime": "2020-06-01T07:59:30.000Z"}
   ],
 
   "users": [

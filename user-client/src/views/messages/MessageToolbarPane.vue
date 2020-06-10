@@ -1,6 +1,6 @@
 <template>
   <v-toolbar flat v-if="users.activeUserSummary" style="background: transparent;">
-    <v-list-item-avatar size="30px">
+    <v-list-item-avatar size="28px">
       <v-img :src="users.activeUserSummary.avatar"></v-img>
     </v-list-item-avatar>
     <v-toolbar-title style="font-size: 110%;">
@@ -22,14 +22,13 @@
 <script lang="ts">
 import {Component, Vue} from 'vue-property-decorator';
 import {mapState} from "vuex";
-import {MessageState} from "@/store/modules/messages";
-import {UserNamespace} from "@/store/modules/users";
+import {UserNamespace, UserState} from "@/store/modules/users";
 
 @Component({
   components: {},
   computed: {...mapState([UserNamespace])},
 })
 export default class MessageToolbarPane extends Vue {
-  users!: MessageState;
+  users!: UserState;
 }
 </script>

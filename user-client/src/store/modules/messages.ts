@@ -77,10 +77,14 @@ const messageModule: Module<MessageState, RootState> = {
     async fetchMessages({commit, state, dispatch}, id: number) {
       try {
         commit(mutations.CLEAR_MESSAGES);
+        commit(mutations.SET_LOADING_PAGE, true);
+
         const messages = await msgRepo.fetchMessages(id, state.currentPage);
         commit(mutations.ADD_MESSAGES, messages);
       } catch (err) {
         dispatch("setSnackbar", {content: err.message, klass: "error"}, {root: true})
+      } finally {
+        commit(mutations.SET_LOADING_PAGE, false);
       }
     },
     async nextPage({commit, dispatch, state}, userId: number) {

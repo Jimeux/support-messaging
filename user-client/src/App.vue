@@ -1,6 +1,7 @@
 <template>
   <v-app>
-    <!--<v-app-bar app src="https://picsum.photos/1920/1080?random">
+<!--
+    <v-app-bar app src="https://picsum.photos/1920/1080?random">
       <template v-slot:img="{ props }">
         <v-img v-bind="props"
                gradient="to top right, rgba(55,236,186,.9), rgba(25,32,72,.8)">
@@ -17,24 +18,22 @@
         </v-tabs>
       </template>
 
-    </v-app-bar>-->
+    </v-app-bar>
+-->
 
-    <v-snackbar v-model="snackbar" style="max-width: 350px; margin-left: auto;"
+    <v-snackbar v-model="snackbar" style="max-width: 390px; margin-left: auto;"
                 :timeout="snackbarTimeout"
                 :color="$store.state.snackbarClass"
-                class="mr-10 mb-10"
-                vertical bottom right multi-line>
-      <div style="font-size: 115%;" v-html="$store.state.snackbarContent"></div>
+                class="mr-10 mt-10"
+                top right multi-line>
+      <div style="font-size: 110%;" v-html="$store.state.snackbarContent"></div>
       <!--todo v-for snackbarContents -->
       <!--<div style="font-size: 115%;" class="mt-4" v-html="$store.state.snackbarContent"></div>-->
-      <div class="d-flex justify-end">
-        <v-btn class="d-flex" text @click="clearSnackbar">
-          Send Report
-        </v-btn>
+      <!--<div class="d-flex justify-end">-->
         <v-btn class="d-flex" text @click="clearSnackbar">
           Close
         </v-btn>
-      </div>
+      <!--</div>-->
     </v-snackbar>
 
     <v-content>

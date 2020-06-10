@@ -2,7 +2,7 @@
   <v-container fluid class="pa-0 home">
     <v-row no-gutters>
       <v-col cols="3" class="pa-0">
-        <MessageUsersPane/>
+        <UsersPane/>
       </v-col>
       <v-col cols="9" class="pa-0">
         <v-row no-gutters>
@@ -15,7 +15,7 @@
             <MessagePane/>
           </v-col>
           <v-col cols="4" class="pa-0" style="border-left: 1px solid rgba(255, 255, 255, 0.12)">
-            <MessageUserInfoPane/>
+            <UserInfoPane/>
           </v-col>
         </v-row>
       </v-col>
@@ -27,16 +27,16 @@
 import Vue from "vue";
 import {Component} from "vue-property-decorator";
 import MessagePane from '@/views/messages/MessageListPane.vue'
-import MessageUsersPane from "@/views/messages/MessageUsersPane.vue";
-import MessageUserInfoPane from "@/views/messages/MessageUserInfoPane.vue";
+import UsersPane from "@/views/users/UsersPane.vue";
+import UserInfoPane from "@/views/users/UserInfoPane.vue";
 import MessageToolbarPane from "@/views/messages/MessageToolbarPane.vue";
 
 @Component({
   components: {
+    MessagePane,
     MessageToolbarPane,
-    MessageUserInfoPane,
-    MessageUsersPane,
-    MessagePane
+    UserInfoPane,
+    UsersPane
   }
 })
 export default class MessagesLayout extends Vue {

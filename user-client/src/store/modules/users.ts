@@ -12,13 +12,16 @@ export interface UserState {
   userSummaries: Array<UserSummary>;
   activeUserSummary: UserSummary | null;
   activeUser: User | null;
-  loadingPage: boolean;
+  loadingSummaries: boolean;
+  loadingUser: boolean;
 }
 
 enum mutations {
   SELECT_USER = 'SELECT_USER',
   ADD_USER_SUMMARIES = 'ADD_USER_SUMMARIES',
-  SET_USER = 'SET_USER'
+  SET_USER = 'SET_USER',
+  SET_LOADING_SUMMARIES = 'SET_LOADING_SUMMARIES',
+  SET_LOADING_USER = 'SET_LOADING_USER',
 }
 
 const userModule: Module<UserState, RootState> = {
@@ -28,7 +31,8 @@ const userModule: Module<UserState, RootState> = {
     activeUserSummary: null,
     activeUser: null,
     userSummaries: [],
-    loadingPage: false,
+    loadingSummaries: false,
+    loadingUser: false
   },
 
   getters: {},
@@ -43,6 +47,12 @@ const userModule: Module<UserState, RootState> = {
     [mutations.SET_USER](state: UserState, user: User) {
       state.activeUser = user;
     },
+    [mutations.SET_LOADING_SUMMARIES](state: UserState, loading: boolean) {
+      state.loadingSummaries = loading;
+    },
+    [mutations.SET_LOADING_USER](state: UserState, loading: boolean) {
+      state.loadingUser = loading;
+    },
     [mutations.ADD_USER_SUMMARIES](state: UserState, us: Array<UserSummary>) {
       state.userSummaries = us;
     }
@@ -51,10 +61,13 @@ const userModule: Module<UserState, RootState> = {
   actions: {
     async fetchUserSummaries({commit, dispatch}) {
       try {
+        commit(mutations.SET_LOADING_SUMMARIES, true);
         const us = await userRepo.fetchUserSummaries();
         commit(mutations.ADD_USER_SUMMARIES, us);
       } catch (err) {
         dispatch("setSnackbar", {content: err.message, klass: "error"}, {root: true});
+      } finally {
+        commit(mutations.SET_LOADING_SUMMARIES, false);
       }
     },
     async selectUser({commit, state, dispatch}, id: number) {
@@ -65,11 +78,14 @@ const userModule: Module<UserState, RootState> = {
         }
 
         commit(mutations.SELECT_USER, found);
+        commit(mutations.SET_LOADING_USER, true);
 
         const user = await userRepo.fetchUser(id);
         commit(mutations.SET_USER, user);
       } catch (err) {
         dispatch("setSnackbar", {content: err.message, klass: "error"}, {root: true})
+      } finally {
+        commit(mutations.SET_LOADING_USER, false);
       }
     }
   }

@@ -53,12 +53,11 @@ export class Messages {
       let nextIsGreater = false;
       if (next != null) {
         const nextUnix = new Date(next.sendTime).getTime() / 1000;
-        const nextDiff = currentUnix - nextUnix;
+        const nextDiff = nextUnix - currentUnix;
         if (60 * 60 * 2 < nextDiff) {
           nextIsGreater = true;
         }
       }
-
 
       if (currentDate != null) {
         const currentDateUnix = new Date(currentDate).getTime() / 1000;
@@ -74,6 +73,8 @@ export class Messages {
         dateToSet = new Date(current.sendTime);
         dateHasBeenSet = true;
       }
+
+      console.log(current.id, nextIsGreater);
 
       let klass: MessageClass;
       if ((prev == null || prev.fromUser !== current.fromUser || dateHasBeenSet) &&

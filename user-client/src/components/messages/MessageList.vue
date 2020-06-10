@@ -1,6 +1,18 @@
 <template>
-  <div @scroll="onScroll" class="message-list pa-4"
+  <div @scroll="onScroll"
+       class="message-list pa-4"
        :style="`overflow-y: auto; height: ` + height + `px;`">
+
+    <div style="text-align: center;">
+      <v-progress-circular v-if="loadingPage" style="text-align: center;"
+                           :size="messages.length === 0 ? 50 : 25"
+                           :width="messages.length === 0 ? 5 : 2"
+                           indeterminate
+                           ref="loader"
+                           :style="`margin-top: ${loadingMargin}px; margin-bottom: 25px;`"
+      ></v-progress-circular>
+    </div>
+
     <MessageBubble v-for="m in convertedMessages" :ref="`bubbles`" :message="m" :key="m.id"/>
   </div>
 </template>
@@ -23,8 +35,8 @@ export default class MessageList extends Vue {
   @Prop()
   loadingPage!: boolean;
 
-  height = 500; // todo: handle window size changes
   init = true;
+  height = 500;
 
   mounted() {
     this.$nextTick(() => this.setHeight());
@@ -33,12 +45,12 @@ export default class MessageList extends Vue {
 
   updated() {
     // FIXME need an init pattern, and also for individual messages (self sent or Pusher)
-    if (this.messages.length == 0) {
+    if (this.messages.length === 0) {
       this.init = true;
     }
-    if (this.init && this.messages.length != 0) {
+    if (this.init && this.messages.length !== 0) {
       this.init = false;
-      this.setHeight(); // FIXME calling this in updated is dangerous (can create infinite loop)
+      this.$nextTick(() => this.setHeight());
     }
 
     if (this.currentMessageId != null) {
@@ -46,9 +58,13 @@ export default class MessageList extends Vue {
       for (const e of found) {
         const el = (e.$el as HTMLElement);
         if (parseInt(el.id, 10) === this.currentMessageId)
-          this.$nextTick(() => this.$el.scrollTop = el.offsetTop - 64);
+          this.$nextTick(() => this.$el.scrollTop = el.offsetTop - 64 - 64);
       }
     }
+  }
+
+  get loadingMargin(): number {
+    return this.messages.length === 0 ? this.height / 2 - 50 : 20;
   }
 
   get convertedMessages(): Array<MessageView> {
@@ -74,7 +90,7 @@ export default class MessageList extends Vue {
   }
 
   getHeightByClass(className: string): number {
-    const elements = document.getElementsByClassName(className)
+    const elements = document.getElementsByClassName(className);
     return elements.length === 0 ? 0 : (elements[0] as HTMLElement).offsetHeight;
   }
 }

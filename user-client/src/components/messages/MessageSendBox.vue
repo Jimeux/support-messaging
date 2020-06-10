@@ -37,7 +37,7 @@ export default class MessageBox extends Vue {
 
   handleSend() {
     if (this.sendDisabled()) {
-      return
+      return;
     }
 
     this.onSend(this.input)
