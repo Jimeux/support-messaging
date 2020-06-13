@@ -43,6 +43,7 @@
 import {Component, Prop, Vue} from 'vue-property-decorator';
 import {UserSummary} from "@/data/user";
 import UserSearchBox from "@/components/users/UserSearchBox.vue";
+import dayjs from "dayjs";
 @Component({
   components: {UserSearchBox}
 })
@@ -61,16 +62,22 @@ export default class UserList extends Vue {
       this.selectedIndex = this.userSummaries.findIndex(us => us.userId == this.activeSummary?.userId);
   }
 
+  updated() {
+    if (this.activeSummary != null)
+      this.selectedIndex = this.userSummaries.findIndex(s => s.userId === this.activeSummary?.userId);
+  }
+
   displayDate(lastSendTime: string): string {
     if (lastSendTime == null) {
       return "";
     }
 
-    const d = new Date(lastSendTime);
-    const hours = d.getHours() < 10 ? "0" + d.getHours() : d.getHours();
-    const minutes = d.getMinutes() < 10 ? "0" + d.getMinutes() : d.getMinutes();
-
-    return `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()} ${hours}:${minutes}`
+    const sendTime = dayjs(lastSendTime);
+    const twoDaysAgo = dayjs().add(-1, "day")
+    if (sendTime.isBefore(twoDaysAgo)) {
+      return sendTime.format("MM/DD HH:mm")
+    }
+    return dayjs(lastSendTime).fromNow();
   }
 
 }

@@ -25,6 +25,7 @@
 <script lang="ts">
 import {Prop, Component, Vue} from 'vue-property-decorator';
 import {MessageView, MessageClass} from "@/data/message";
+import dayjs from "dayjs";
 
 @Component
 export default class MessageBubble extends Vue {
@@ -35,11 +36,12 @@ export default class MessageBubble extends Vue {
       return "";
     }
 
-    const d = this.message.date;
-    const hours = d.getHours() < 10 ? "0" + d.getHours() : d.getHours();
-    const minutes = d.getMinutes() < 10 ? "0" + d.getMinutes() : d.getMinutes();
-
-    return `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()} ${hours}:${minutes}`
+    const date = dayjs(this.message.date);
+    const twoDaysAgo = dayjs().add(-1, "day")
+    if (date.isBefore(twoDaysAgo)) {
+      return date.format("YYYY/MM/DD HH:mm");
+    }
+    return date.fromNow();
   }
 
   showAvatar(): boolean {

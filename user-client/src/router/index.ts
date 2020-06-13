@@ -11,6 +11,17 @@ Vue.use(VueRouter)
     component: MessagesLayout
   },
   {
+    path: '/u/:userId',
+    name: 'Messages',
+    component: MessagesLayout,
+    props: (route) => {
+      return {
+        userId: route.params.userId ? parseInt(route.params.userId, 10) : null
+      };
+    }
+  },
+
+  {
     path: '/about',
     name: 'About',
     // route level code-splitting

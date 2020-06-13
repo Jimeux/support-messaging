@@ -74,8 +74,6 @@ export class Messages {
         dateHasBeenSet = true;
       }
 
-      console.log(current.id, nextIsGreater);
-
       let klass: MessageClass;
       if ((prev == null || prev.fromUser !== current.fromUser || dateHasBeenSet) &&
           (next == null || next.fromUser !== current.fromUser || nextIsGreater))

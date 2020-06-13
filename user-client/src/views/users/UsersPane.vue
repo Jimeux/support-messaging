@@ -57,6 +57,7 @@ export default class MessageUsersPane extends Vue {
   }
 
   onSummarySelected(userId: number) {
+    this.$router.push(`/u/${userId}`);
     this.selectUser(userId);
     this.fetchMessages(userId);
   }

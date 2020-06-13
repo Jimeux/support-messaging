@@ -6,8 +6,12 @@ import store from './store/store'
 import vuetify from './plugins/vuetify';
 import Pusher from "pusher-js";
 import Message from "@/data/message";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 
 Vue.config.productionTip = false
+
+dayjs.extend(relativeTime)
 
 // todo move to some kind of eventBus class, which can also be called from actions
 const pusher = new Pusher('c817752eaaf09a554620', {

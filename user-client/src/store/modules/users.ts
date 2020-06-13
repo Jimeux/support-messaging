@@ -10,6 +10,7 @@ export const UserNamespace = "users";
 
 export interface UserState {
   userSummaries: Array<UserSummary>;
+  activeUserId: number | null;
   activeUserSummary: UserSummary | null;
   activeUser: User | null;
   loadingSummaries: boolean;
@@ -17,6 +18,7 @@ export interface UserState {
 }
 
 enum mutations {
+  SET_ACTIVE_USER_ID = 'SET_ACTIVE_USER_ID',
   SELECT_USER = 'SELECT_USER',
   ADD_USER_SUMMARIES = 'ADD_USER_SUMMARIES',
   SET_USER = 'SET_USER',
@@ -28,6 +30,7 @@ const userModule: Module<UserState, RootState> = {
   namespaced: true,
 
   state: {
+    activeUserId: null,
     activeUserSummary: null,
     activeUser: null,
     userSummaries: [],
@@ -44,6 +47,9 @@ const userModule: Module<UserState, RootState> = {
       // init
       state.activeUser = null;
     },
+    [mutations.SET_ACTIVE_USER_ID](state: UserState, userId: number) {
+      state.activeUserId = userId;
+    },
     [mutations.SET_USER](state: UserState, user: User) {
       state.activeUser = user;
     },
@@ -59,17 +65,25 @@ const userModule: Module<UserState, RootState> = {
   },
 
   actions: {
-    async fetchUserSummaries({commit, dispatch}) {
+    setActiveUserId({commit}, id: number) {
+      commit(mutations.SET_ACTIVE_USER_ID, id);
+    },
+
+    async fetchUserSummaries({commit, dispatch, state}) {
       try {
         commit(mutations.SET_LOADING_SUMMARIES, true);
         const us = await userRepo.fetchUserSummaries();
         commit(mutations.ADD_USER_SUMMARIES, us);
+
+        if (state.activeUserId != null)
+          dispatch("selectUser", state.activeUserId);
       } catch (err) {
         dispatch("setSnackbar", {content: err.message, klass: "error"}, {root: true});
       } finally {
         commit(mutations.SET_LOADING_SUMMARIES, false);
       }
     },
+
     async selectUser({commit, state, dispatch}, id: number) {
       try {
         const found = state.userSummaries.find(u => u.userId === id)
