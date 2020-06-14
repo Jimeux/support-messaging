@@ -12,6 +12,8 @@
     <div
         :style="`overflow-y: auto; height: ` + height + `px; background: transparent; border-top: 1px solid rgba(255, 255, 255, 0.12); border-right: 1px solid rgba(255, 255, 255, 0.12);`">
 
+      <UserSearchBox class="ma-4" v-if="users.userSummaries.length !== 0" :onSearch="search"/>
+
       <div v-if="users.loadingSummaries" style="text-align: center;">
         <v-progress-circular :size="50"
                              :width="5"
@@ -20,7 +22,8 @@
         ></v-progress-circular>
       </div>
 
-      <UserSummaryList :userSummaries="users.userSummaries"
+      <UserSummaryList v-if="!users.loadingSummaries"
+                       :userSummaries="users.userSummaries"
                        :onSummarySelected="onSummarySelected"
                        :activeSummary="users.activeUserSummary"/>
 
@@ -34,14 +37,16 @@ import {mapActions, mapState} from "vuex"
 import UserSummaryList from "@/components/users/UserSummaryList.vue"
 import {UserActions, UserNamespace, UserState} from "@/store/modules/users"
 import {MessageActions, MessageNamespace} from "@/store/modules/messages"
+import UserSearchBox from "@/components/users/UserSearchBox.vue";
 
 @Component({
   components: {
+    UserSearchBox,
     UserSummaryList
   },
   computed: {...mapState([UserNamespace])},
   methods: {
-    ...mapActions(UserNamespace, [UserActions.selectUser, UserActions.fetchUserSummaries]),
+    ...mapActions(UserNamespace, [UserActions.search, UserActions.selectUser, UserActions.fetchUserSummaries]),
     ...mapActions(MessageNamespace, [MessageActions.fetchMessages])
   }
 })
@@ -49,6 +54,7 @@ export default class MessageUsersPane extends Vue {
   // actions
   readonly fetchMessages!: (id: number) => void
   readonly selectUser!: (id: number) => void
+  readonly search!: (id: number) => void
   readonly fetchUserSummaries!: () => void
   // state
   readonly users!: UserState

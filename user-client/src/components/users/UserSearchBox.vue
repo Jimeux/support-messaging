@@ -10,10 +10,13 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from 'vue-property-decorator'
+import {Component, Prop, Vue} from 'vue-property-decorator'
 
 @Component
 export default class UserSearchBox extends Vue {
+  @Prop({required: true})
+  readonly onSearch!: (id: number) => void
+
   input = ""
 
   get disabled(): boolean {
@@ -21,12 +24,16 @@ export default class UserSearchBox extends Vue {
   }
 
   handleSend() {
-    if (this.disabled) {
-      return
-    }
+    if (!this.disabled) {
+      const id = parseInt(this.input, 10)
+      if (isNaN(id))
+        console.log(this.input)
+      else {
+        this.onSearch(id)
+      }
 
-    // this.onSend(this.input)
-    this.input = ""
+      // this.input = ""
+    }
   }
 }
 </script>

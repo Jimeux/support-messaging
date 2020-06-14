@@ -21,13 +21,14 @@ enum mutations {
   ADD_USER_SUMMARIES = 'ADD_USER_SUMMARIES',
   SET_USER = 'SET_USER',
   SET_LOADING_SUMMARIES = 'SET_LOADING_SUMMARIES',
-  SET_LOADING_USER = 'SET_LOADING_USER',
+  SET_LOADING_USER = 'SET_LOADING_USER'
 }
 
 export enum UserActions {
   selectUser = 'selectUser',
   setActiveUserId = 'setActiveUserId',
-  fetchUserSummaries = 'fetchUserSummaries'
+  fetchUserSummaries = 'fetchUserSummaries',
+  search = 'search'
 }
 
 export const UserNamespace = "users"
@@ -95,7 +96,19 @@ export const users: Module<UserState, RootState> = {
       }
     },
 
-    async [UserActions.selectUser](ctx: ActionContext<UserState, RootState>, id: number ) {
+    async [UserActions.search](ctx: ActionContext<UserState, RootState>, id: number) {
+      try {
+        ctx.commit(mutations.SET_LOADING_SUMMARIES, true)
+        const us = await userRepo.userSummariesById(id)
+        ctx.commit(mutations.ADD_USER_SUMMARIES, us)
+      } catch (err) {
+        await ctx.dispatch("setSnackbar", {content: err.message, klass: "error"}, {root: true})
+      } finally {
+        ctx.commit(mutations.SET_LOADING_SUMMARIES, false)
+      }
+    },
+
+    async [UserActions.selectUser](ctx: ActionContext<UserState, RootState>, id: number) {
       try {
         const found = ctx.state.userSummaries.find(u => u.userId === id)
         if (found === undefined) {

@@ -42,7 +42,7 @@ export default class MessageList extends Vue {
   }
 
   @Watch('messages')
-  onMessagesUpdated(newVal: Array<Message>, oldVal: Array<Message>) {
+  onMessagesUpdated(newVal: Array<Message>) {
     if (newVal.length === 0) // changed user
       this.currentMessageId = null
 

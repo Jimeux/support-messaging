@@ -7,6 +7,11 @@ export default class UserRepository {
       return (response.data as Array<UserSummary>)
   }
 
+  public async userSummariesById(userId: number): Promise<Array<UserSummary>> {
+      const response = await axios.get(`http://localhost:3000/summaries?userId=${userId}`)
+      return (response.data as Array<UserSummary>)
+  }
+
   public async fetchUser(userId: number): Promise<User> {
       const response = await axios.get(`http://localhost:3000/users/${userId}`)
       return (response.data as User)
