@@ -23,51 +23,51 @@
 </template>
 
 <script lang="ts">
-import {Prop, Component, Vue} from 'vue-property-decorator';
-import {MessageView, MessageClass} from "@/data/message";
-import dayjs from "dayjs";
+import {Prop, Component, Vue} from 'vue-property-decorator'
+import {MessageView, MessageClass} from "@/data/message"
+import dayjs from "dayjs"
 
 @Component
 export default class MessageBubble extends Vue {
   @Prop({required: true})
-  readonly message!: MessageView;
+  readonly message!: MessageView
 
   get dateString(): string {
     if (this.message.date == null) {
-      return "";
+      return ""
     }
 
-    const date = dayjs(this.message.date);
+    const date = dayjs(this.message.date)
     const twoDaysAgo = dayjs().add(-1, "day")
     if (date.isBefore(twoDaysAgo)) {
-      return date.format("YYYY/MM/DD HH:mm");
+      return date.format("YYYY/MM/DD HH:mm")
     }
-    return date.fromNow();
+    return date.fromNow()
   }
 
   get showAvatar(): boolean {
     return this.message.message.fromUser &&
-        (this.message.klass === MessageClass.FIRST || this.message.klass === MessageClass.ONLY);
+        (this.message.klass === MessageClass.FIRST || this.message.klass === MessageClass.ONLY)
   }
 
   get borderClass(): string {
     switch (this.message.klass) {
       case MessageClass.FIRST:
-        return "first";
+        return "first"
       case MessageClass.MIDDLE:
-        return "middle";
+        return "middle"
       case MessageClass.LAST:
-        return "last";
+        return "last"
       case MessageClass.ONLY:
-        return "only";
+        return "only"
       default:
-        return "";
+        return ""
     }
   }
 
   get bubbleClass(): string {
-    const def = "message-bubble";
-    return !this.message.message.fromUser ? def + ' sender' : def;
+    const def = "message-bubble"
+    return !this.message.message.fromUser ? def + ' sender' : def
   }
 }
 </script>

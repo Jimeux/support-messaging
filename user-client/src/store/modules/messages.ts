@@ -1,10 +1,10 @@
-import {ActionContext, Module} from "vuex";
-import {RootState} from "@/store/store";
-import Message from "@/data/message";
-import MessageRepository from "@/api/messageRepository";
+import {ActionContext, Module} from "vuex"
+import {RootState} from "@/store/store"
+import Message from "@/data/message"
+import MessageRepository from "@/api/messageRepository"
 
 // todo how to inject?
-const msgRepo = new MessageRepository();
+const msgRepo = new MessageRepository()
 
 export interface MessageState {
   messages: Array<Message>;
@@ -30,7 +30,7 @@ export enum MessageActions {
   nextPage = 'nextPage'
 }
 
-export const MessageNamespace = "messages";
+export const MessageNamespace = "messages"
 
 export const messages: Module<MessageState, RootState> = {
   namespaced: true,
@@ -48,80 +48,80 @@ export const messages: Module<MessageState, RootState> = {
   mutations: {
     [mutations.CLEAR_MESSAGES](state: MessageState) {
       // todo initialState?
-      state.messages = [];
-      state.currentPage = 1;
-      state.currentMessageId = null;
-      state.loadingPage = false;
-      state.hasMore = true;
+      state.messages = []
+      state.currentPage = 1
+      state.currentMessageId = null
+      state.loadingPage = false
+      state.hasMore = true
     },
 
     [mutations.ADD_MESSAGE](state: MessageState, msg: Message) {
-      state.messages = [...state.messages, msg].sort((a, b) => (a.id >= b.id) ? 1 : -1);
+      state.messages = [...state.messages, msg].sort((a, b) => (a.id >= b.id) ? 1 : -1)
     },
 
     [mutations.ADD_MESSAGES](state: MessageState, messages: Array<Message>) {
       state.messages = [...messages, ...state.messages]
-          .sort((a, b) => (a.id >= b.id) ? 1 : -1);
-      state.currentPage += 1;
+          .sort((a, b) => (a.id >= b.id) ? 1 : -1)
+      state.currentPage += 1
       if (messages.length < 20) //todo limit const
-        state.hasMore = false;
+        state.hasMore = false
     },
 
     [mutations.SAVE_MESSAGE_POSITION](state: MessageState, messageId: number) {
-      state.currentMessageId = messageId;
+      state.currentMessageId = messageId
     },
 
     [mutations.SET_LOADING_PAGE](state: MessageState, loading: boolean) {
-      state.loadingPage = loading;
+      state.loadingPage = loading
     }
   },
 
   actions: {
     [MessageActions.addMessage](ctx: ActionContext<MessageState, RootState>, {msg}) {
-      ctx.commit(mutations.ADD_MESSAGE, msg);
+      ctx.commit(mutations.ADD_MESSAGE, msg)
     },
 
     [MessageActions.sendMessage](ctx: ActionContext<MessageState, RootState>, { userId, text }) {
-      const msg = new Message(100, userId, false, text, "", new Date().toJSON());
-      ctx.commit(mutations.ADD_MESSAGE, msg);
+      const msg = new Message(100, userId, false, text, "", new Date().toJSON())
+      ctx.commit(mutations.ADD_MESSAGE, msg)
     },
 
     [MessageActions.updateLastReadTime]() {
-      console.log("updateLastReadTime");
+      console.log("updateLastReadTime")
     },
 
     async [MessageActions.fetchMessages](ctx: ActionContext<MessageState, RootState>, id: number) {
       try {
-        ctx.commit(mutations.CLEAR_MESSAGES);
-        ctx.commit(mutations.SET_LOADING_PAGE, true);
+        ctx.commit(mutations.CLEAR_MESSAGES)
+        ctx.commit(mutations.SET_LOADING_PAGE, true)
 
-        const messages = await msgRepo.fetchMessages(id, ctx.state.currentPage);
-        ctx.commit(mutations.ADD_MESSAGES, messages);
+        const messages = await msgRepo.fetchMessages(id, ctx.state.currentPage)
+        ctx.commit(mutations.ADD_MESSAGES, messages)
       } catch (err) {
         await ctx.dispatch("setSnackbar", {content: err.message, klass: "error"}, {root: true})
       } finally {
-        ctx.commit(mutations.SET_LOADING_PAGE, false);
+        ctx.commit(mutations.SET_LOADING_PAGE, false)
       }
     },
 
     async [MessageActions.nextPage](ctx: ActionContext<MessageState, RootState>, userId: number) {
       if (ctx.state.loadingPage)
-        return; // in progress
+        return // in progress
 
-      ctx.commit(mutations.SET_LOADING_PAGE, true);
+      ctx.commit(mutations.SET_LOADING_PAGE, true)
       if (ctx.state.messages.length !== 0) {
-        ctx.commit(mutations.SAVE_MESSAGE_POSITION, ctx.state.messages[0].id); // todo check length
+        ctx.commit(mutations.SAVE_MESSAGE_POSITION, ctx.state.messages[0].id) // todo check length
       }
 
       try {
-        const messages = await msgRepo.fetchMessages(userId, ctx.state.currentPage);
-        ctx.commit(mutations.ADD_MESSAGES, messages);
+        const messages = await msgRepo.fetchMessages(userId, ctx.state.currentPage)
+        ctx.commit(mutations.ADD_MESSAGES, messages)
       } catch (err) {
-        await ctx.dispatch("setSnackbar", {content: err.message, klass: "error"}, {root: true});
+        await ctx.dispatch("setSnackbar", {content: err.message, klass: "error"}, {root: true})
       } finally {
-        ctx.commit(mutations.SET_LOADING_PAGE, false);
+        ctx.commit(mutations.SET_LOADING_PAGE, false)
       }
     }
 
   }
-};
+}

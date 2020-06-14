@@ -3,11 +3,11 @@ import App from './App.vue'
 import './registerServiceWorker'
 import router from './router'
 import {store} from './store/store'
-import vuetify from './plugins/vuetify';
-import Pusher from "pusher-js";
-import Message from "@/data/message";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
+import vuetify from './plugins/vuetify'
+import Pusher from "pusher-js"
+import Message from "@/data/message"
+import dayjs from "dayjs"
+import relativeTime from "dayjs/plugin/relativeTime"
 
 Vue.config.productionTip = false
 

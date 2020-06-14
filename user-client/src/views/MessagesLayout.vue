@@ -24,15 +24,15 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import {Component, Prop} from "vue-property-decorator";
+import Vue from "vue"
+import {Component, Prop} from "vue-property-decorator"
 import MessagePane from '@/views/messages/MessageListPane.vue'
-import UsersPane from "@/views/users/UsersPane.vue";
-import UserInfoPane from "@/views/users/UserInfoPane.vue";
-import MessageToolbarPane from "@/views/messages/MessageToolbarPane.vue";
-import {mapActions} from "vuex";
-import {UserActions, UserNamespace} from "@/store/modules/users";
-import {MessageActions, MessageNamespace} from "@/store/modules/messages";
+import UsersPane from "@/views/users/UsersPane.vue"
+import UserInfoPane from "@/views/users/UserInfoPane.vue"
+import MessageToolbarPane from "@/views/messages/MessageToolbarPane.vue"
+import {mapActions} from "vuex"
+import {UserActions, UserNamespace} from "@/store/modules/users"
+import {MessageActions, MessageNamespace} from "@/store/modules/messages"
 
 @Component({
   components: {
@@ -56,8 +56,8 @@ export default class MessagesLayout extends Vue {
 
   mounted() {
     if (this.userId != null) {
-      this.setActiveUserId(this.userId);
-      this.fetchMessages(this.userId);
+      this.setActiveUserId(this.userId)
+      this.fetchMessages(this.userId)
     }
   }
 }

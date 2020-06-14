@@ -29,11 +29,11 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from 'vue-property-decorator';
-import {mapActions, mapState} from "vuex";
-import UserSummaryList from "@/components/users/UserSummaryList.vue";
-import {UserActions, UserNamespace, UserState} from "@/store/modules/users";
-import {MessageActions, MessageNamespace} from "@/store/modules/messages";
+import {Component, Vue} from 'vue-property-decorator'
+import {mapActions, mapState} from "vuex"
+import UserSummaryList from "@/components/users/UserSummaryList.vue"
+import {UserActions, UserNamespace, UserState} from "@/store/modules/users"
+import {MessageActions, MessageNamespace} from "@/store/modules/messages"
 
 @Component({
   components: {
@@ -47,40 +47,40 @@ import {MessageActions, MessageNamespace} from "@/store/modules/messages";
 })
 export default class MessageUsersPane extends Vue {
   // actions
-  readonly fetchMessages!: (id: number) => void;
-  readonly selectUser!: (id: number) => void;
-  readonly fetchUserSummaries!: () => void;
+  readonly fetchMessages!: (id: number) => void
+  readonly selectUser!: (id: number) => void
+  readonly fetchUserSummaries!: () => void
   // state
-  readonly users!: UserState;
+  readonly users!: UserState
   // data
-  height = 500;
+  height = 500
 
   created() {
-    this.fetchUserSummaries();
+    this.fetchUserSummaries()
   }
 
   onSummarySelected(userId: number) {
     if (this.users.activeUser?.id !== userId) {
-      this.$router.push(`/m/${userId}`);
-      this.selectUser(userId);
-      this.fetchMessages(userId);
+      this.$router.push(`/m/${userId}`)
+      this.selectUser(userId)
+      this.fetchMessages(userId)
     }
   }
 
   mounted() {
-    this.setHeight();
+    this.setHeight()
     // todo avoid multiple
-    window.addEventListener('resize', this.setHeight.bind(this));
+    window.addEventListener('resize', this.setHeight.bind(this))
   }
 
   setHeight() {
-    const appBarHeight = this.getHeightByClass('v-app-bar');
-    this.height = window.innerHeight - appBarHeight - 64;
+    const appBarHeight = this.getHeightByClass('v-app-bar')
+    this.height = window.innerHeight - appBarHeight - 64
   }
 
   getHeightByClass(className: string): number {
-    const elements = document.getElementsByClassName(className);
-    return elements.length === 0 ? 0 : (elements[0] as HTMLElement).offsetHeight;
+    const elements = document.getElementsByClassName(className)
+    return elements.length === 0 ? 0 : (elements[0] as HTMLElement).offsetHeight
   }
 }
 </script>

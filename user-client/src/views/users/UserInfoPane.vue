@@ -71,9 +71,9 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from 'vue-property-decorator';
-import {mapState} from "vuex";
-import {UserNamespace, UserState} from "@/store/modules/users";
+import {Component, Vue} from 'vue-property-decorator'
+import {mapState} from "vuex"
+import {UserNamespace, UserState} from "@/store/modules/users"
 
 @Component({
   components: {},
@@ -81,29 +81,29 @@ import {UserNamespace, UserState} from "@/store/modules/users";
 })
 export default class MessageUserInfoPane extends Vue {
   // state
-  readonly users!: UserState;
+  readonly users!: UserState
   // data
-  height = 500;
+  height = 500
 
   mounted() {
-    this.setHeight();
+    this.setHeight()
     // todo avoid multiple
-    window.addEventListener('resize', this.setHeight.bind(this));
+    window.addEventListener('resize', this.setHeight.bind(this))
   }
 
   updated() {
-    this.setHeight();
+    this.setHeight()
   }
 
   setHeight() {
-    const appBarHeight = this.getHeightByClass('v-app-bar');
-    const toolbarHeight = this.users.activeUser ? 64 : 0; // todo try to get dynamically
-    this.height = window.innerHeight - appBarHeight - toolbarHeight;
+    const appBarHeight = this.getHeightByClass('v-app-bar')
+    const toolbarHeight = this.users.activeUser ? 64 : 0 // todo try to get dynamically
+    this.height = window.innerHeight - appBarHeight - toolbarHeight
   }
 
   getHeightByClass(className: string): number {
-    const elements = document.getElementsByClassName(className);
-    return elements.length === 0 ? 0 : (elements[0] as HTMLElement).offsetHeight;
+    const elements = document.getElementsByClassName(className)
+    return elements.length === 0 ? 0 : (elements[0] as HTMLElement).offsetHeight
   }
 }
 </script>

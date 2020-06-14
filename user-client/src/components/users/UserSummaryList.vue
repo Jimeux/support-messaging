@@ -11,40 +11,40 @@
 </template>
 
 <script lang="ts">
-import {Component, Prop, Vue} from 'vue-property-decorator';
-import {UserSummary} from "@/data/user";
-import UserSearchBox from "@/components/users/UserSearchBox.vue";
-import UserSummaryItem from "@/components/users/UserSummaryItem.vue";
+import {Component, Prop, Vue} from 'vue-property-decorator'
+import {UserSummary} from "@/data/user"
+import UserSearchBox from "@/components/users/UserSearchBox.vue"
+import UserSummaryItem from "@/components/users/UserSummaryItem.vue"
 
 @Component({
   components: {UserSummaryItem, UserSearchBox}
 })
 export default class UserSummaryList extends Vue {
   @Prop({required: true})
-  readonly activeSummary!: UserSummary | null;
+  readonly activeSummary!: UserSummary | null
   @Prop({required: true})
-  readonly userSummaries!: Array<UserSummary>;
+  readonly userSummaries!: Array<UserSummary>
   @Prop({required: true})
-  readonly onSummarySelected!: (id: number) => void;
+  readonly onSummarySelected!: (id: number) => void
 
-  selectedIndex = -1;
+  selectedIndex = -1
 
   created() {
-    this.setActiveIndex();
+    this.setActiveIndex()
   }
 
   updated() {
-    this.setActiveIndex();
+    this.setActiveIndex()
   }
 
   setActiveIndex() {
     if (this.activeSummary != null)
-      this.selectedIndex = this.userSummaries.findIndex(s => s.userId === this.activeSummary?.userId);
+      this.selectedIndex = this.userSummaries.findIndex(s => s.userId === this.activeSummary?.userId)
   }
 
   summarySelected(summaryId: number, index: number) {
-    this.selectedIndex = index;
-    this.onSummarySelected(summaryId);
+    this.selectedIndex = index
+    this.onSummarySelected(summaryId)
   }
 }
 </script>

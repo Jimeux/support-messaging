@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import {messages} from "@/store/modules/messages";
-import {users} from "@/store/modules/users";
+import {messages} from "@/store/modules/messages"
+import {users} from "@/store/modules/users"
 
 Vue.use(Vuex)
 
@@ -27,17 +27,17 @@ export const store = new Vuex.Store<RootState>({
 
   mutations: {
     [RootMutations.SET_SNACKBAR](state: RootState, {content, klass}) {
-      state.snackbarContent = content;
-      state.snackbarClass = klass;
+      state.snackbarContent = content
+      state.snackbarClass = klass
     }
   },
 
   actions: {
     setSnackbar({commit}, {content, klass}) {
-      commit(RootMutations.SET_SNACKBAR, {content, klass});
+      commit(RootMutations.SET_SNACKBAR, {content, klass})
     },
     clearSnackbar({commit}) {
-      commit(RootMutations.SET_SNACKBAR, {content: '', klass: ''});
+      commit(RootMutations.SET_SNACKBAR, {content: '', klass: ''})
     }
   }
-});
+})

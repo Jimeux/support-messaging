@@ -13,7 +13,7 @@ Vue.use(VueRouter)
     props: (route) => {
       return {
         userId: route.params.userId ? parseInt(route.params.userId, 10) : null
-      };
+      }
     }
   },
 

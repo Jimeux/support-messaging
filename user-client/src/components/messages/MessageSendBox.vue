@@ -23,23 +23,23 @@
 </template>
 
 <script lang="ts">
-import {Component, Prop, Vue} from 'vue-property-decorator';
+import {Component, Prop, Vue} from 'vue-property-decorator'
 
 @Component
 export default class MessageBox extends Vue {
   @Prop({required: true})
-  readonly onSend!: (text: string) => void;
+  readonly onSend!: (text: string) => void
 
   input = ""
 
   get disabled(): boolean {
-    return this.input === "";
+    return this.input === ""
   }
 
   handleSend() {
     if (!this.disabled) {
-      this.onSend(this.input);
-      this.input = "";
+      this.onSend(this.input)
+      this.input = ""
     }
   }
 }

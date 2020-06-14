@@ -20,15 +20,15 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from 'vue-property-decorator';
-import {mapState} from "vuex";
-import {UserNamespace, UserState} from "@/store/modules/users";
+import {Component, Vue} from 'vue-property-decorator'
+import {mapState} from "vuex"
+import {UserNamespace, UserState} from "@/store/modules/users"
 
 @Component({
   components: {},
   computed: {...mapState([UserNamespace])},
 })
 export default class MessageToolbarPane extends Vue {
-  readonly users!: UserState;
+  readonly users!: UserState
 }
 </script>

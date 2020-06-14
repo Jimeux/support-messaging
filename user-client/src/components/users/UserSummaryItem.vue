@@ -30,29 +30,29 @@
 </template>
 
 <script lang="ts">
-import {Component, Prop, Vue} from 'vue-property-decorator';
-import {UserSummary} from "@/data/user";
-import UserSearchBox from "@/components/users/UserSearchBox.vue";
-import dayjs from "dayjs";
+import {Component, Prop, Vue} from 'vue-property-decorator'
+import {UserSummary} from "@/data/user"
+import UserSearchBox from "@/components/users/UserSearchBox.vue"
+import dayjs from "dayjs"
 
 @Component({
   components: {UserSearchBox}
 })
 export default class UserSummaryItem extends Vue {
   @Prop({required: true})
-  readonly summary!: UserSummary;
+  readonly summary!: UserSummary
 
   displayDate(lastSendTime: string): string {
     if (lastSendTime == null) {
-      return "";
+      return ""
     }
 
-    const sendTime = dayjs(lastSendTime);
+    const sendTime = dayjs(lastSendTime)
     const twoDaysAgo = dayjs().add(-1, "day")
     if (sendTime.isBefore(twoDaysAgo)) {
       return sendTime.format("MM/DD HH:mm")
     }
-    return dayjs(lastSendTime).fromNow();
+    return dayjs(lastSendTime).fromNow()
   }
 }
 </script>
