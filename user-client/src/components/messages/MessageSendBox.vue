@@ -16,7 +16,7 @@
                   v-model="input"
                   @keydown.enter="handleSend"
     ></v-text-field>
-    <v-btn class="d-flex" icon :disabled="sendDisabled()">
+    <v-btn class="d-flex" icon :disabled="disabled">
       <v-icon @click="handleSend" color="primary">send</v-icon>
     </v-btn>
   </v-footer>
@@ -27,21 +27,20 @@ import {Component, Prop, Vue} from 'vue-property-decorator';
 
 @Component
 export default class MessageBox extends Vue {
-  @Prop() onSend!: (text: string) => void;
+  @Prop({required: true})
+  readonly onSend!: (text: string) => void;
 
   input = ""
 
-  sendDisabled(): boolean {
-    return this.input === ""
+  get disabled(): boolean {
+    return this.input === "";
   }
 
   handleSend() {
-    if (this.sendDisabled()) {
-      return;
+    if (!this.disabled) {
+      this.onSend(this.input);
+      this.input = "";
     }
-
-    this.onSend(this.input)
-    this.input = ""
   }
 }
 </script>

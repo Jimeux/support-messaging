@@ -16,12 +16,12 @@ import {Component, Vue} from 'vue-property-decorator';
 export default class UserSearchBox extends Vue {
   input = ""
 
-  sendDisabled(): boolean {
+  get disabled(): boolean {
     return this.input === ""
   }
 
   handleSend() {
-    if (this.sendDisabled()) {
+    if (this.disabled) {
       return;
     }
 

@@ -31,8 +31,8 @@ import UsersPane from "@/views/users/UsersPane.vue";
 import UserInfoPane from "@/views/users/UserInfoPane.vue";
 import MessageToolbarPane from "@/views/messages/MessageToolbarPane.vue";
 import {mapActions} from "vuex";
-import {UserNamespace} from "@/store/modules/users";
-import {MessageNamespace} from "@/store/modules/messages";
+import {UserActions, UserNamespace} from "@/store/modules/users";
+import {MessageActions, MessageNamespace} from "@/store/modules/messages";
 
 @Component({
   components: {
@@ -42,15 +42,17 @@ import {MessageNamespace} from "@/store/modules/messages";
     UsersPane
   },
   methods: {
-    ...mapActions(UserNamespace, ['setActiveUserId']),
-    ...mapActions(MessageNamespace, ['fetchMessages'])
+    ...mapActions(UserNamespace, [UserActions.setActiveUserId]),
+    ...mapActions(MessageNamespace, [MessageActions.fetchMessages])
   }
 })
 export default class MessagesLayout extends Vue {
-  @Prop() userId!: number | null
   // actions
-  setActiveUserId!: (id: number) => void
-  fetchMessages!: (id: number) => void
+  readonly setActiveUserId!: (id: number) => void
+  readonly fetchMessages!: (id: number) => void
+
+  @Prop({required: true})
+  readonly userId!: number | null
 
   mounted() {
     if (this.userId != null) {

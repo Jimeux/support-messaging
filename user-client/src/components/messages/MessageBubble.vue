@@ -1,20 +1,20 @@
 <template>
   <div :id="message.message.id" class="pl-2 pr-2">
     <div v-if="message.date != null" class="date-time">
-      {{dateString()}}
+      {{dateString}}
     </div>
     <v-row no-gutters dense>
       <v-col v-if="!message.message.fromUser" cols="3" class="pa-0 ma-0"></v-col>
       <v-col cols="9" class="pa-0 ma-0">
-        <div :class="`d-flex ${bubbleClass()} ${borderClass() === 'only' ? 'only-top' : ''}`">
-          <v-avatar class="d-flex" size="30" v-if="showAvatar()">
+        <div :class="`d-flex ${bubbleClass} ${borderClass === 'only' ? 'only-top' : ''}`">
+          <v-avatar class="d-flex" size="30" v-if="showAvatar">
             <img alt="Avatar"
                  :src="message.message.avatar">
             <v-icon v-if="!message.message.avatar && message.message.fromUser">send</v-icon>
           </v-avatar>
           <v-avatar class="d-flex" size="30" v-else-if="message.message.fromUser">
           </v-avatar>
-          <span :class="borderClass()">{{ message.message.text }}</span>
+          <span :class="borderClass">{{ message.message.text }}</span>
         </div>
       </v-col>
       <v-col v-if="message.message.fromUser" cols="3" class="pa-0 ma-0"></v-col>
@@ -29,9 +29,10 @@ import dayjs from "dayjs";
 
 @Component
 export default class MessageBubble extends Vue {
-  @Prop() message!: MessageView;
+  @Prop({required: true})
+  readonly message!: MessageView;
 
-  dateString(): string {
+  get dateString(): string {
     if (this.message.date == null) {
       return "";
     }
@@ -44,12 +45,12 @@ export default class MessageBubble extends Vue {
     return date.fromNow();
   }
 
-  showAvatar(): boolean {
+  get showAvatar(): boolean {
     return this.message.message.fromUser &&
         (this.message.klass === MessageClass.FIRST || this.message.klass === MessageClass.ONLY);
   }
 
-  borderClass(): string {
+  get borderClass(): string {
     switch (this.message.klass) {
       case MessageClass.FIRST:
         return "first";
@@ -59,10 +60,12 @@ export default class MessageBubble extends Vue {
         return "last";
       case MessageClass.ONLY:
         return "only";
+      default:
+        return "";
     }
   }
 
-  bubbleClass(): string {
+  get bubbleClass(): string {
     const def = "message-bubble";
     return !this.message.message.fromUser ? def + ' sender' : def;
   }
@@ -74,18 +77,14 @@ export default class MessageBubble extends Vue {
   font-family: "Helvetica Neue", "Segoe UI", "Helvetica", "Arial", "hiragino kaku gothic pro", "meiryo", "ms pgothic", "sans-serif";
   -webkit-font-smoothing: antialiased;
   border-top: 2px solid transparent;
-  /*padding: 0 14px;*/
 }
 
 .message-bubble span {
-  /*background: #F2F3F5;*/
   background: #26272A;
   display: block;
-  /*color: #1C1C1C;*/
   color: white;
   padding: 6px 16px;
   margin-left: 14px;
-  /*margin-top: 2px;*/
 }
 
 .message-bubble span.first {
@@ -151,7 +150,6 @@ export default class MessageBubble extends Vue {
   clear: both;
   padding-top: 30px;
   padding-bottom: 10px;
-  /*color: rgba(0, 0, 0, .40);*/
   font-size: 14px
 }
 

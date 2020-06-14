@@ -11,7 +11,7 @@
 <script lang="ts">
 import {Component, Vue} from 'vue-property-decorator';
 import {mapActions, mapState} from "vuex";
-import {MessageState, MessageNamespace} from "@/store/modules/messages";
+import {MessageState, MessageNamespace, MessageActions} from "@/store/modules/messages";
 import MessageSendBox from "@/components/messages/MessageSendBox.vue";
 import MessageList from "@/components/messages/MessageList.vue";
 import {UserNamespace, UserState} from "@/store/modules/users";
@@ -26,31 +26,28 @@ import {UserNamespace, UserState} from "@/store/modules/users";
     ...mapState([UserNamespace])
   },
   methods: {
-    ...mapActions(MessageNamespace, ["sendMessage", "updateLastReadTime", "nextPage"])
+    ...mapActions(MessageNamespace, [MessageActions.sendMessage, MessageActions.updateLastReadTime, MessageActions.nextPage])
   }
 })
 export default class MessageListPane extends Vue {
-  // state
-  messages!: MessageState;
-  users!: UserState;
   // actions
-  sendMessage!: (obj: object) => void;
-  updateLastReadTime!: () => void;
-  nextPage!: (userId: number) => void;
+  readonly sendMessage!: (obj: object) => void;
+  readonly updateLastReadTime!: () => void;
+  readonly nextPage!: (userId: number) => void;
+  // state
+  readonly messages!: MessageState;
+  readonly users!: UserState;
 
   onScrollToTop() {
-    if (this.users.activeUser == null || !this.messages.hasMore) {
-      return;
+    if (this.users.activeUser != null && this.messages.hasMore) {
+      this.nextPage(this.users.activeUser.id);
     }
-
-    this.nextPage(this.users.activeUser?.id);
   }
 
   onSendMessage(text: string) {
-    if (this.users.activeUser == null) {
-      return;
+    if (this.users.activeUser != null) {
+      this.sendMessage({userId: this.users.activeUser.id, text: text})
     }
-    this.sendMessage({userId: this.users.activeUser.id, text: text})
   }
 }
 </script>

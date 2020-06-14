@@ -1,12 +1,10 @@
-import {Module} from "vuex";
+import {ActionContext, Module} from "vuex";
 import {RootState} from "@/store/store";
 import {User, UserSummary} from "@/data/user";
 import UserRepository from "@/api/userRepository";
 
 // todo how to inject?
 const userRepo = new UserRepository();
-
-export const UserNamespace = "users";
 
 export interface UserState {
   userSummaries: Array<UserSummary>;
@@ -26,7 +24,15 @@ enum mutations {
   SET_LOADING_USER = 'SET_LOADING_USER',
 }
 
-const userModule: Module<UserState, RootState> = {
+export enum UserActions {
+  selectUser = 'selectUser',
+  setActiveUserId = 'setActiveUserId',
+  fetchUserSummaries = 'fetchUserSummaries'
+}
+
+export const UserNamespace = "users";
+
+export const users: Module<UserState, RootState> = {
   namespaced: true,
 
   state: {
@@ -47,62 +53,68 @@ const userModule: Module<UserState, RootState> = {
       // init
       state.activeUser = null;
     },
+
     [mutations.SET_ACTIVE_USER_ID](state: UserState, userId: number) {
       state.activeUserId = userId;
     },
+
     [mutations.SET_USER](state: UserState, user: User) {
       state.activeUser = user;
     },
+
     [mutations.SET_LOADING_SUMMARIES](state: UserState, loading: boolean) {
       state.loadingSummaries = loading;
     },
+
     [mutations.SET_LOADING_USER](state: UserState, loading: boolean) {
       state.loadingUser = loading;
     },
+
     [mutations.ADD_USER_SUMMARIES](state: UserState, us: Array<UserSummary>) {
       state.userSummaries = us;
     }
   },
 
   actions: {
-    setActiveUserId({commit}, id: number) {
-      commit(mutations.SET_ACTIVE_USER_ID, id);
+    [UserActions.setActiveUserId](ctx: ActionContext<UserState, RootState>, id: number) {
+      ctx.commit(mutations.SET_ACTIVE_USER_ID, id);
     },
 
-    async fetchUserSummaries({commit, dispatch, state}) {
+    async [UserActions.fetchUserSummaries](ctx: ActionContext<UserState, RootState>) {
       try {
-        commit(mutations.SET_LOADING_SUMMARIES, true);
+        ctx.commit(mutations.SET_LOADING_SUMMARIES, true);
         const us = await userRepo.fetchUserSummaries();
-        commit(mutations.ADD_USER_SUMMARIES, us);
+        ctx.commit(mutations.ADD_USER_SUMMARIES, us);
 
-        if (state.activeUserId != null)
-          dispatch("selectUser", state.activeUserId);
+        if (ctx.state.activeUserId != null)
+          ctx.dispatch("selectUser", ctx.state.activeUserId).then();
       } catch (err) {
-        dispatch("setSnackbar", {content: err.message, klass: "error"}, {root: true});
+        await ctx.dispatch("setSnackbar", {content: err.message, klass: "error"}, {root: true});
       } finally {
-        commit(mutations.SET_LOADING_SUMMARIES, false);
+        ctx.commit(mutations.SET_LOADING_SUMMARIES, false);
       }
     },
 
-    async selectUser({commit, state, dispatch}, id: number) {
+    async [UserActions.selectUser](ctx: ActionContext<UserState, RootState>, id: number ) {
       try {
-        const found = state.userSummaries.find(u => u.userId === id)
+        const found = ctx.state.userSummaries.find(u => u.userId === id)
         if (found === undefined) {
-          dispatch("setSnackbar", {content: `User summary not found for id ${id}`, klass: "error"}, {root: true})
+          const payload = {content: `User summary not found for id ${id}`, klass: "error"};
+          await ctx.dispatch("setSnackbar", payload, {root: true});
+          return;
         }
 
-        commit(mutations.SELECT_USER, found);
-        commit(mutations.SET_LOADING_USER, true);
+        ctx.commit(mutations.SELECT_USER, found);
+        ctx.commit(mutations.SET_LOADING_USER, true);
 
         const user = await userRepo.fetchUser(id);
-        commit(mutations.SET_USER, user);
+        ctx.commit(mutations.SET_USER, user);
       } catch (err) {
-        dispatch("setSnackbar", {content: err.message, klass: "error"}, {root: true})
+        await ctx.dispatch("setSnackbar", {content: err.message, klass: "error"}, {root: true})
       } finally {
-        commit(mutations.SET_LOADING_USER, false);
+        ctx.commit(mutations.SET_LOADING_USER, false);
       }
     }
+
   }
 };
-
-export default userModule;

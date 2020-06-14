@@ -72,16 +72,17 @@
 
 <script lang="ts">
 import {Component, Vue} from 'vue-property-decorator';
-import {mapActions, mapState} from "vuex";
+import {mapState} from "vuex";
 import {UserNamespace, UserState} from "@/store/modules/users";
 
 @Component({
   components: {},
-  computed: {...mapState([UserNamespace])},
-  methods: {...mapActions(UserNamespace, [])}
+  computed: {...mapState([UserNamespace])}
 })
 export default class MessageUserInfoPane extends Vue {
-  users!: UserState;
+  // state
+  readonly users!: UserState;
+  // data
   height = 500;
 
   mounted() {
@@ -101,7 +102,7 @@ export default class MessageUserInfoPane extends Vue {
   }
 
   getHeightByClass(className: string): number {
-    const elements = document.getElementsByClassName(className)
+    const elements = document.getElementsByClassName(className);
     return elements.length === 0 ? 0 : (elements[0] as HTMLElement).offsetHeight;
   }
 }

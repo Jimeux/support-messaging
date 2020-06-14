@@ -4,7 +4,7 @@
       <v-list-item-avatar size="40px" class="ml-2">
         <v-img src="http://placekitten.com/220/220"></v-img>
       </v-list-item-avatar>
-      <v-toolbar-title >
+      <v-toolbar-title>
         Concierge Messenger
       </v-toolbar-title>
     </v-toolbar>
@@ -20,9 +20,10 @@
         ></v-progress-circular>
       </div>
 
-      <UserList :userSummaries="users.userSummaries"
-                :onSummarySelected="onSummarySelected"
-                :activeSummary="users.activeUserSummary"/>
+      <UserSummaryList :userSummaries="users.userSummaries"
+                       :onSummarySelected="onSummarySelected"
+                       :activeSummary="users.activeUserSummary"/>
+
     </div>
   </div>
 </template>
@@ -30,26 +31,28 @@
 <script lang="ts">
 import {Component, Vue} from 'vue-property-decorator';
 import {mapActions, mapState} from "vuex";
-import UserList from "@/components/users/UserList.vue";
-import {UserNamespace, UserState} from "@/store/modules/users";
-import {MessageNamespace} from "@/store/modules/messages";
+import UserSummaryList from "@/components/users/UserSummaryList.vue";
+import {UserActions, UserNamespace, UserState} from "@/store/modules/users";
+import {MessageActions, MessageNamespace} from "@/store/modules/messages";
 
 @Component({
   components: {
-    UserList
+    UserSummaryList
   },
   computed: {...mapState([UserNamespace])},
   methods: {
-    ...mapActions(UserNamespace, ['selectUser', 'fetchUserSummaries']),
-    ...mapActions(MessageNamespace, ['fetchMessages'])
+    ...mapActions(UserNamespace, [UserActions.selectUser, UserActions.fetchUserSummaries]),
+    ...mapActions(MessageNamespace, [MessageActions.fetchMessages])
   }
 })
 export default class MessageUsersPane extends Vue {
-  users!: UserState;
-  selectUser!: (id: number) => void
-  fetchMessages!: (id: number) => void
-  fetchUserSummaries!: () => void
-
+  // actions
+  readonly fetchMessages!: (id: number) => void;
+  readonly selectUser!: (id: number) => void;
+  readonly fetchUserSummaries!: () => void;
+  // state
+  readonly users!: UserState;
+  // data
   height = 500;
 
   created() {
@@ -57,9 +60,11 @@ export default class MessageUsersPane extends Vue {
   }
 
   onSummarySelected(userId: number) {
-    this.$router.push(`/u/${userId}`);
-    this.selectUser(userId);
-    this.fetchMessages(userId);
+    if (this.users.activeUser?.id !== userId) {
+      this.$router.push(`/m/${userId}`);
+      this.selectUser(userId);
+      this.fetchMessages(userId);
+    }
   }
 
   mounted() {
@@ -74,7 +79,7 @@ export default class MessageUsersPane extends Vue {
   }
 
   getHeightByClass(className: string): number {
-    const elements = document.getElementsByClassName(className)
+    const elements = document.getElementsByClassName(className);
     return elements.length === 0 ? 0 : (elements[0] as HTMLElement).offsetHeight;
   }
 }

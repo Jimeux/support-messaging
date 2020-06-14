@@ -6,13 +6,9 @@ Vue.use(VueRouter)
 
   const routes: Array<RouteConfig> = [
   {
-    path: '/',
+    path: '/m/:userId?',
     name: 'Messages',
-    component: MessagesLayout
-  },
-  {
-    path: '/u/:userId',
-    name: 'Messages',
+    alias: '/',
     component: MessagesLayout,
     props: (route) => {
       return {

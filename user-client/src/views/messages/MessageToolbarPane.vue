@@ -29,6 +29,6 @@ import {UserNamespace, UserState} from "@/store/modules/users";
   computed: {...mapState([UserNamespace])},
 })
 export default class MessageToolbarPane extends Vue {
-  users!: UserState;
+  readonly users!: UserState;
 }
 </script>

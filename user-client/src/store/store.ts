@@ -1,7 +1,7 @@
 import Vue from 'vue'
-import Vuex, {StoreOptions} from 'vuex'
-import messages from "@/store/modules/messages";
-import users from "@/store/modules/users";
+import Vuex from 'vuex'
+import {messages} from "@/store/modules/messages";
+import {users} from "@/store/modules/users";
 
 Vue.use(Vuex)
 
@@ -14,7 +14,7 @@ export interface RootState {
   snackbarClass: string;
 }
 
-const store: StoreOptions<RootState> = {
+export const store = new Vuex.Store<RootState>({
   modules: {
     messages,
     users
@@ -29,7 +29,7 @@ const store: StoreOptions<RootState> = {
     [RootMutations.SET_SNACKBAR](state: RootState, {content, klass}) {
       state.snackbarContent = content;
       state.snackbarClass = klass;
-    },
+    }
   },
 
   actions: {
@@ -39,8 +39,5 @@ const store: StoreOptions<RootState> = {
     clearSnackbar({commit}) {
       commit(RootMutations.SET_SNACKBAR, {content: '', klass: ''});
     }
-
   }
-};
-
-export default new Vuex.Store<RootState>(store);
+});

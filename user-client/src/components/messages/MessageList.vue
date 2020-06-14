@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts">
-import {Component, Prop, Vue} from 'vue-property-decorator';
+import {Component, Prop, Vue, Watch} from 'vue-property-decorator';
 import Message, {Messages, MessageView} from "@/data/message";
 import MessageBubble from "@/components/messages/MessageBubble.vue";
 
@@ -27,15 +27,13 @@ import MessageBubble from "@/components/messages/MessageBubble.vue";
 })
 export default class MessageList extends Vue {
   @Prop({required: true})
-  messages!: Array<Message>;
+  readonly messages!: Array<Message>;
   @Prop({required: true})
-  onScrollToTop!: () => void;
-  @Prop()
-  currentMessageId!: number | null;
-  @Prop()
-  loadingPage!: boolean;
+  readonly onScrollToTop!: () => void;
+  @Prop({required: true})
+  readonly loadingPage!: boolean;
 
-  init = true;
+  currentMessageId: number | null = null;
   height = 500;
 
   mounted() {
@@ -43,23 +41,17 @@ export default class MessageList extends Vue {
     window.addEventListener('resize', this.setHeight.bind(this));
   }
 
-  updated() {
-    // FIXME need an init pattern, and also for individual messages (self sent or Pusher)
-    if (this.messages.length === 0) {
-      this.init = true;
-    }
-    if (this.init && this.messages.length !== 0) {
-      this.init = false;
-      this.$nextTick(() => this.setHeight());
-    }
+  @Watch('messages')
+  onMessagesUpdated(newVal: Array<Message>, oldVal: Array<Message>) {
+    if (newVal.length === 0) // changed user
+      this.currentMessageId = null;
 
-    if (this.currentMessageId != null) {
-      const found = (this.$refs["bubbles"] as Array<Vue>);
-      for (const e of found) {
-        const el = (e.$el as HTMLElement);
-        if (parseInt(el.id, 10) === this.currentMessageId)
-          this.$nextTick(() => this.$el.scrollTop = el.offsetTop - 64 - 64);
-      }
+    if (this.currentMessageId == null) {
+      this.$nextTick(() => this.setHeight());
+    } else {
+      const messageId = this.currentMessageId;
+      this.$nextTick(() => this.scrollToMessage(messageId));
+      this.currentMessageId = null;
     }
   }
 
@@ -72,8 +64,20 @@ export default class MessageList extends Vue {
     return Messages.toMessageViews(this.messages);
   }
 
+  scrollToMessage(messageId: number) {
+    const bubbles = (this.$refs["bubbles"] as Array<Vue>);
+    for (const b of bubbles) {
+      const el = (b.$el as HTMLElement);
+      if (parseInt(el.id, 10) === messageId) {
+        this.$el.scrollTop = el.offsetTop - 64 - 64;
+        break;
+      }
+    }
+  }
+
   onScroll() {
-    if (!this.loadingPage && this.$el.scrollTop === 0) {
+    if (!this.loadingPage && this.$el.scrollTop === 0 && this.messages.length !== 0) {
+      this.currentMessageId = this.messages[0].id;
       this.onScrollToTop();
     }
   }

@@ -106,9 +106,9 @@
     {"id": 55, "userId": 3, "fromUser": false, "avatar": "http://placekitten.com/150/150", "text": "My friend", "sendTime": "2020-06-07T00:15:30.000Z"},
     {"id": 56, "userId": 3, "fromUser": true, "avatar": "http://placekitten.com/150/150", "text": "My friend", "sendTime": "2020-06-07T00:15:30.000Z"},
     {"id": 57, "userId": 3, "fromUser": true, "avatar": "http://placekitten.com/150/150", "text": "My friend", "sendTime": "2020-06-07T00:15:30.000Z"},
-    {"id": 57, "userId": 3, "fromUser": true, "avatar": "http://placekitten.com/150/150", "text": "Demonstrations, now in their second weekend, were largely peaceful – and included moments of levity and jubilance. It was a notable shift from the weekend prior, when police beat back demonstrators with force, using teargas and pepper spray to suppress the unrest.", "sendTime": "2020-06-07T00:15:30.000Z"},
-    {"id": 58, "userId": 3, "fromUser": false, "avatar": "http://placekitten.com/150/150", "text": "My friend 58", "sendTime": "2020-06-07T01:15:30.000Z"},
-    {"id": 59, "userId": 3, "fromUser": true, "avatar": "http://placekitten.com/150/150", "text": "My friend my friend why is 59 on a new line", "sendTime":  "2020-06-07T01:15:30.000Z"}
+    {"id": 58, "userId": 3, "fromUser": true, "avatar": "http://placekitten.com/150/150", "text": "Demonstrations, now in their second weekend, were largely peaceful – and included moments of levity and jubilance. It was a notable shift from the weekend prior, when police beat back demonstrators with force, using teargas and pepper spray to suppress the unrest.", "sendTime": "2020-06-07T00:15:30.000Z"},
+    {"id": 59, "userId": 3, "fromUser": false, "avatar": "http://placekitten.com/150/150", "text": "My friend 58", "sendTime": "2020-06-07T01:15:30.000Z"},
+    {"id": 60, "userId": 3, "fromUser": true, "avatar": "http://placekitten.com/150/150", "text": "My friend my friend why is 59 on a new line", "sendTime":  "2020-06-07T01:15:30.000Z"}
 
 
   ]
