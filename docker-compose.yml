@@ -1,0 +1,13 @@
+version: "3.8"
+services:
+
+  user-service:
+    build:
+      context: ./user-service
+      args:
+        MODULE: github.com/Jimeux/support-messaging/user-service
+    environment:
+      SERVER_PORT: 8080
+    ports:
+      - "8001:8080"
+    command: ./bin/service

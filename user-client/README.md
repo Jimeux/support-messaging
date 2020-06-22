@@ -1,8 +1,17 @@
 # user-client
 
+<p align="center">
+    <img src="screenshot.png" alt="Screenshot"/>
+</p>
+
 ## Project setup
 ```
 npm install
+```
+
+### Mock server for development
+```
+json-server --watch db.json --port 3000 --delay 200
 ```
 
 ### Compiles and hot-reloads for development
@@ -15,15 +24,7 @@ npm run serve
 npm run build
 ```
 
-### Run your unit tests
-```
-npm run test:unit
-```
-
 ### Lints and fixes files
 ```
 npm run lint
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
