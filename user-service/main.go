@@ -18,7 +18,7 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", Test)
 
-	log.Printf("Starting ad-service on port %d...", port)
+	log.Printf("Starting user-service on port %d...", port)
 	server := &http.Server{
 		Addr:         fmt.Sprintf(":%d", port),
 		Handler:      mux,
@@ -34,7 +34,7 @@ func main() {
 func Test(w http.ResponseWriter, r *http.Request) {
 	res := struct {
 		Msg string `json:"msg"`
-	}{Msg: fmt.Sprintf("Welcome to the user-service 🙋🏻 (%s)", r.RequestURI)}
+	}{Msg: fmt.Sprintf("Welcome to the user-service ♥️🙋🏻♥️ (%s)", r.RequestURI)}
 
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(res); err != nil {
