@@ -3,26 +3,26 @@ AWSTemplateFormatVersion: 2010-09-09
 
 
 Parameters:
+  Tag:
+    Type: String
+    Default: latest
   Cluster:
     Type: String
   DesiredCount:
     Type: Number
     Default: 1
+  TargetGroup:
+    Type: String
   LaunchType:
     Type: String
     Default: Fargate
     AllowedValues:
       - Fargate
       - EC2
-  TargetGroup:
-    Type: String
   SourceSecurityGroup:
     Type: AWS::EC2::SecurityGroup::Id
   Subnets:
     Type: List<AWS::EC2::Subnet::Id>
-  Tag:
-    Type: String
-    Default: latest
   Repository:
     Type: String
 
@@ -47,12 +47,6 @@ Resources:
               Service: ecs-tasks.amazonaws.com
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
-
-  Repository:
-    Type: AWS::ECR::Repository
-    Properties:
-      RepositoryName: simple-app # TODO
-    # DeletionPolicy: Retain TODO
 
   LogGroup:
     Type: AWS::Logs::LogGroup
@@ -106,9 +100,6 @@ Resources:
           Image: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${Repository}:${Tag}
           Essential: true
           Memory: 256
-          MountPoints:
-            - SourceVolume: my-vol
-              ContainerPath: /var/www/my-vol
           PortMappings:
             - ContainerPort: 80
           Environment:
@@ -120,19 +111,6 @@ Resources:
               awslogs-region: !Ref AWS::Region
               awslogs-group: !Ref LogGroup
               awslogs-stream-prefix: !Ref AWS::StackName
-        - Name: busybox
-          Image: busybox
-          EntryPoint:
-            - sh
-            - -c
-          Essential: true
-          Memory: 256
-          VolumesFrom:
-            - SourceContainer: simple-app
-          Command:
-            - /bin/sh -c "while true; do /bin/date > /var/www/my-vol/date; sleep 1; done"
-      Volumes:
-        - Name: my-vol
 
 
 Outputs:

@@ -12,11 +12,12 @@ Parameters:
     NoEcho: true
   GitHubUser:
     Type: String
+
+  Repository:
+    Type: String
   Cluster:
     Type: String
   Service:
-    Type: String
-  Repository:
     Type: String
 
 

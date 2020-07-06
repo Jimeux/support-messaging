@@ -1,0 +1,12 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Microservice ECR Repositories
+Resources:
+
+  UserServiceRepo:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: user-service
+
+Outputs:
+  UserServiceRepo:
+    Value: !Ref UserServiceRepo

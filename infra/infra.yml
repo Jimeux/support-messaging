@@ -21,6 +21,10 @@ Parameters:
     Description: >
       Token for the user specified above. (https://github.com/settings/tokens)
 
+  UserServiceRepo:
+    Type: String
+    Default: user-service
+
 # Metadata:
 #   AWS::CloudFormation::Interface:
 #     ParameterLabels:
@@ -80,7 +84,7 @@ Resources:
         TargetGroup: !GetAtt LoadBalancer.Outputs.TargetGroup
         SourceSecurityGroup: !GetAtt LoadBalancer.Outputs.SecurityGroup
         Subnets: !GetAtt VPC.Outputs.Subnets
-        Tag:
+        Repository: !Ref UserServiceRepo
 
   DeploymentPipeline:
     Type: AWS::CloudFormation::Stack
@@ -93,7 +97,7 @@ Resources:
         GitHubToken: !Ref GitHubToken
         GitHubRepo: !Ref GitHubRepo
         GitHubBranch: !Ref GitHubBranch
-        Repository: !GetAtt Service.Outputs.Repository
+        Repository: !Ref UserServiceRepo
 
 
 Outputs:
