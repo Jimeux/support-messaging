@@ -5,26 +5,26 @@ AWSTemplateFormatVersion: 2010-09-09
 Parameters:
   Cluster:
     Type: String
-
   DesiredCount:
     Type: Number
     Default: 1
-
   LaunchType:
     Type: String
     Default: Fargate
     AllowedValues:
       - Fargate
       - EC2
-
   TargetGroup:
     Type: String
-
   SourceSecurityGroup:
     Type: AWS::EC2::SecurityGroup::Id
-
   Subnets:
     Type: List<AWS::EC2::Subnet::Id>
+  Tag:
+    Type: String
+    Default: latest
+  Repository:
+    Type: String
 
 
 Conditions:
@@ -41,12 +41,18 @@ Resources:
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
-          - Action: sts:AssumeRole
+          - Action: sts:AssumeRole # TODO
             Effect: Allow
             Principal:
               Service: ecs-tasks.amazonaws.com
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+
+  Repository:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: simple-app # TODO
+    # DeletionPolicy: Retain TODO
 
   LogGroup:
     Type: AWS::Logs::LogGroup
@@ -63,9 +69,9 @@ Resources:
       LaunchType: FARGATE
       NetworkConfiguration:
         AwsvpcConfiguration:
-          AssignPublicIp: ENABLED
+          AssignPublicIp: ENABLED # TODO
           SecurityGroups:
-            - !Ref SourceSecurityGroup
+            - !Ref SourceSecurityGroup # TODO same as ALB?
           Subnets: !Ref Subnets
       LoadBalancers:
         - ContainerName: simple-app
@@ -97,11 +103,7 @@ Resources:
       ExecutionRoleArn: !Ref TaskExecutionRole
       ContainerDefinitions:
         - Name: simple-app
-          Image: amazon/amazon-ecs-sample
-          EntryPoint:
-            - /usr/sbin/apache2
-            - -D
-            - FOREGROUND
+          Image: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${Repository}:${Tag}
           Essential: true
           Memory: 256
           MountPoints:
@@ -109,6 +111,9 @@ Resources:
               ContainerPath: /var/www/my-vol
           PortMappings:
             - ContainerPort: 80
+          Environment:
+            - Name: SERVER_PORT
+              Value: 80
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -131,5 +136,7 @@ Resources:
 
 
 Outputs:
+  Repository:
+    Value: !Ref Repository
   Service:
     Value: !If [ Fargate, !Ref FargateService, !Ref EC2Service ]

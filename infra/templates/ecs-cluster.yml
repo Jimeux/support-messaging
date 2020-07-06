@@ -9,21 +9,16 @@ Parameters:
     AllowedValues:
       - Fargate
       - EC2
-
   InstanceType:
     Type: String
     Default: t2.micro
-
   ClusterSize:
     Type: Number
     Default: 2
-
   Subnets:
     Type: List<AWS::EC2::Subnet::Id>
-
   SourceSecurityGroup:
     Type: AWS::EC2::SecurityGroup::Id
-
   VpcId:
     Type: AWS::EC2::VPC::Id
 

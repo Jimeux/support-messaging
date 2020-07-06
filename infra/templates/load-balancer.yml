@@ -9,13 +9,10 @@ Parameters:
     AllowedValues:
       - Fargate
       - EC2
-
   Subnets:
     Type: List<AWS::EC2::Subnet::Id>
-
   VpcId:
     Type: String
-
 
 Conditions:
   EC2: !Equals [ !Ref LaunchType, "EC2" ]
@@ -23,12 +20,12 @@ Conditions:
 
 Resources:
   SecurityGroup:
-    Type: "AWS::EC2::SecurityGroup"
+    Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: !Sub ${AWS::StackName}-alb
-      SecurityGroupIngress:
-        - CidrIp: "0.0.0.0/0"
-          IpProtocol: "TCP"
+      SecurityGroupIngress: # TODO
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: TCP
           FromPort: 80
           ToPort: 80
       VpcId: !Ref VpcId
@@ -66,7 +63,7 @@ Resources:
       HealthyThresholdCount: 2
       TargetType: !If [ EC2, "instance", "ip" ]
       TargetGroupAttributes:
-        - Key: deregistration_delay.timeout_seconds
+        - Key: deregistration_delay.timeout_seconds # TODO
           Value: 30
 
   ListenerRule:
@@ -75,6 +72,7 @@ Resources:
       ListenerArn: !Ref LoadBalancerListener
       Priority: 1
       Conditions:
+          # TODO how to do path-based forwarding??
         - Field: path-pattern
           Values:
             - /
