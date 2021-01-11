@@ -1,5 +1,5 @@
 <template>
-  <v-list two-line style="background: transparent;">
+  <v-list two-line style="background: transparent;" class="pt-0">
     <v-list-item-group :value="selectedIndex" active-class="primary--text">
       <UserSummaryItem v-for="(s, index) in userSummaries"
                        :summary="s"

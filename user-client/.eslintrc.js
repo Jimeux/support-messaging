@@ -35,7 +35,9 @@ module.exports = {
       ],
       rules: {
         'no-empty-interface': 'off',
-        'ban-ts-ignore': 'off'
+        'ban-ts-ignore': 'off',
+        'no-explicit-any': 'off',
+        'explicit-module-boundary-types': 'off',
       }
     }
   ]

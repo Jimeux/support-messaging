@@ -4,7 +4,7 @@
       <v-img :src="users.activeUserSummary.avatar"></v-img>
     </v-list-item-avatar>
     <v-toolbar-title style="font-size: 110%;">
-      {{users.activeUserSummary.name}}
+      {{users.activeUserSummary.displayName()}}
     </v-toolbar-title>
     <v-spacer></v-spacer>
     <v-btn icon>

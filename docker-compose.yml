@@ -11,3 +11,14 @@ services:
     ports:
       - "8001:8080"
     command: ./bin/service
+
+  support-service:
+    build:
+      context: ./support-service
+      args:
+        MODULE: github.com/Jimeux/support-messaging/support-service
+    environment:
+      SERVER_PORT: 3000
+    ports:
+      - "8002:3000"
+    command: ./bin/service

@@ -11,7 +11,8 @@ npm install
 
 ### Mock server for development
 ```
-json-server --watch db.json --port 3000 --delay 200
+npm i -g json-server
+npm run mock-server
 ```
 
 ### Compiles and hot-reloads for development
