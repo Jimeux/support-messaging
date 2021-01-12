@@ -8,7 +8,7 @@
       <v-col v-if="!message.message.fromUser" cols="3" class="pa-0 ma-0"></v-col>
       <v-col cols="9" class="pa-0 ma-0">
         <div :class="`d-flex ${bubbleClass} ${borderClass === 'only' ? 'only-top' : ''}`">
-          <v-avatar class="d-flex" size="30" v-if="showAvatar">
+          <v-avatar :class="`d-flex ${borderClass === 'first' ? 'only-top' : ''}`" size="30" v-if="showAvatar">
             <img alt="Avatar"
                  :src="user.avatar">
             <v-icon v-if="!user.avatar && message.message.fromUser">send</v-icon>
@@ -24,7 +24,7 @@
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-icon
-                    class="ml-2"
+                    :class="`ml-2 ${borderClass === 'only' || borderClass === 'first' ? 'only-top' : ''}`"
                     medium
                     v-bind="attrs"
                     v-on="on"
@@ -37,7 +37,7 @@
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-icon
-                    class="ml-2"
+                    :class="`ml-2 ${borderClass === 'only' || borderClass === 'first' ? 'only-top' : ''}`"
                     medium
                     v-bind="attrs"
                     v-on="on"
@@ -90,7 +90,7 @@ export default class MessageBubble extends Vue {
   get borderClass(): string {
     switch (this.message.klass) {
       case MessageClass.FIRST:
-        return "first avatar"
+        return "first"
       case MessageClass.MIDDLE:
         return "middle"
       case MessageClass.LAST:

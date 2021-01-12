@@ -1,39 +1,55 @@
 <template>
   <v-app>
-<!--
-    <v-app-bar app src="https://picsum.photos/1920/1080?random">
-      <template v-slot:img="{ props }">
-        <v-img v-bind="props"
-               gradient="to top right, rgba(55,236,186,.9), rgba(25,32,72,.8)">
-        </v-img>
-      </template>
-      <v-toolbar-title>Support</v-toolbar-title>
+    <!--
+        <v-app-bar app src="https://picsum.photos/1920/1080?random">
+          <template v-slot:img="{ props }">
+            <v-img v-bind="props"
+                   gradient="to top right, rgba(55,236,186,.9), rgba(25,32,72,.8)">
+            </v-img>
+          </template>
+          <v-toolbar-title>Support</v-toolbar-title>
 
-      <v-spacer></v-spacer>
+          <v-spacer></v-spacer>
 
-      <template v-slot:extension>
-        <v-tabs align-with-title color="white">
-          <v-tab @click="$router.push('/')">Messages</v-tab>
-          <v-tab @click="$router.push('about')">Notifications</v-tab>
-        </v-tabs>
-      </template>
+          <template v-slot:extension>
+            <v-tabs align-with-title color="white">
+              <v-tab @click="$router.push('/')">Messages</v-tab>
+              <v-tab @click="$router.push('about')">Notifications</v-tab>
+            </v-tabs>
+          </template>
 
-    </v-app-bar>
--->
+        </v-app-bar>
+    -->
 
-    <v-snackbar v-model="snackbar" style="max-width: 390px; margin-left: auto;"
-                :timeout="snackbarTimeout"
-                :color="$store.state.snackbarClass"
-                class="mr-10 mt-10"
-                top right multi-line>
-      <div style="font-size: 110%;" v-html="$store.state.snackbarContent"></div>
-      <!--todo v-for snackbarContents -->
-      <!--<div style="font-size: 115%;" class="mt-4" v-html="$store.state.snackbarContent"></div>-->
-      <!--<div class="d-flex justify-end">-->
-        <v-btn class="d-flex" text @click="clearSnackbar">
+    <v-snackbar
+        class="mt-2 mr-2"
+        style="max-width: 390px; margin-left: auto;"
+        v-model="snackbar"
+        :color="$store.state.snackbarClass"
+        vertical
+        top
+        right
+    >
+      <div class="mt-1" style="font-size: 115%;">
+        {{ $store.state.snackbarContent }}
+      </div>
+
+      <template v-slot:action="{ attrs }">
+        <v-btn
+            text
+            v-bind="attrs"
+            @click="clearSnackbar"
+        >
+          Report
+        </v-btn>
+        <v-btn
+            text
+            v-bind="attrs"
+            @click="clearSnackbar"
+        >
           Close
         </v-btn>
-      <!--</div>-->
+      </template>
     </v-snackbar>
 
     <v-main>

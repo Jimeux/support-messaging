@@ -106,18 +106,14 @@ export const messages: Module<MessageState, RootState> = {
       ctx.commit(mutations.ADD_MESSAGE, msg)
     },
 
-    [MessageActions.sendMessage](ctx: ActionContext<MessageState, RootState>, {userId, text}) {
-      const msg = new Message({
-        id: 100,
-        user_id: userId,
-        staff_id: null,
-        status: 3,
-        content_type: 1,
-        content: text,
-        sent_at: Date.now(),
-        from_user: false
-      })
-      ctx.commit(mutations.ADD_MESSAGE, msg)
+    async [MessageActions.sendMessage](ctx: ActionContext<MessageState, RootState>, {userId, text}) {
+      try {
+        const msg = await msgRepo.create(userId, text)
+        ctx.commit(mutations.ADD_MESSAGE, msg)
+      } catch (err) {
+        console.log(err)
+      } /*finally {
+      }*/
     },
 
     [MessageActions.updateLastReadTime]() {
