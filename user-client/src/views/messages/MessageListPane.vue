@@ -1,9 +1,9 @@
 <template>
   <v-container class="pa-0" v-if="users.activeUserSummary">
-    <MessageList :messages="messages.messages"
+    <MessageList :currentUser="users.activeUser"
+                 :messages="messages"
                  :onScrollToTop="onScrollToTop"
-                 :loadingPage="messages.loadingPage"
-                 :currentMessageId="messages.currentMessageId"/>
+                 :loadingPage="messages.loadingPage" />
     <MessageSendBox :onSend="onSendMessage"/>
   </v-container>
 </template>
@@ -11,10 +11,11 @@
 <script lang="ts">
 import {Component, Vue} from 'vue-property-decorator'
 import {mapActions, mapState} from "vuex"
-import {MessageState, MessageNamespace, MessageActions} from "@/store/modules/messages"
+import {MessageNamespace, MessageActions} from "@/store/modules/messages"
 import MessageSendBox from "@/components/messages/MessageSendBox.vue"
 import MessageList from "@/components/messages/MessageList.vue"
 import {UserNamespace, UserState} from "@/store/modules/users"
+import Message from "@/data/message";
 
 @Component({
   components: {
@@ -31,15 +32,15 @@ import {UserNamespace, UserState} from "@/store/modules/users"
 })
 export default class MessageListPane extends Vue {
   // actions
-  readonly sendMessage!: (obj: object) => void
+  readonly sendMessage!: (obj: any) => void
   readonly updateLastReadTime!: () => void
   readonly nextPage!: (userId: number) => void
   // state
-  readonly messages!: MessageState
   readonly users!: UserState
 
   onScrollToTop() {
-    if (this.users.activeUser != null && this.messages.hasMore) {
+    const pg = this.$store.getters["messages/pagingState"]
+    if (this.users.activeUser != null && pg.hasMore) {
       this.nextPage(this.users.activeUser.id)
     }
   }
@@ -48,6 +49,10 @@ export default class MessageListPane extends Vue {
     if (this.users.activeUser != null) {
       this.sendMessage({userId: this.users.activeUser.id, text: text})
     }
+  }
+
+  get messages(): Array<Message> {
+    return this.$store.getters["messages/currentMessages"]
   }
 }
 </script>

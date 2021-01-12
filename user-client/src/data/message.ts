@@ -1,18 +1,22 @@
 export default class Message {
   readonly id: number
   readonly userId: number
+  readonly staffId: number
+  readonly status: number
+  readonly contentType: number
+  readonly content: string
+  readonly sentAt: number
   readonly fromUser: boolean
-  readonly avatar: string
-  readonly text: string
-  readonly sendTime: string
 
-  constructor(id: number, userId: number, fromUser: boolean, text: string, avatar: string, sendTime: string) {
-    this.id = id
-    this.userId = userId
-    this.fromUser = fromUser
-    this.avatar = avatar
-    this.text = text
-    this.sendTime = sendTime
+  constructor(data: any) {
+    this.id = data.id
+    this.userId = data.user_id
+    this.staffId = data.staff_id
+    this.status = data.status
+    this.contentType = data.content_type
+    this.content = data.content
+    this.sentAt = data.sent_at
+    this.fromUser = data.from_user
   }
 }
 
@@ -39,7 +43,7 @@ export class Messages {
   static toMessageViews(mm: Array<Message>): Array<MessageView> {
     const len = mm.length
 
-    let currentDate: string | null = null
+    let currentDate: number | null = null
     const views = Array<MessageView>()
     for (let i = 0; i < len; i++) {
       const prev = i > 0 ? mm[i - 1] : null
@@ -49,10 +53,10 @@ export class Messages {
       let dateToSet: Date | null = null
       let dateHasBeenSet = false
 
-      const currentUnix = new Date(current.sendTime).getTime() / 1000
+      const currentUnix = new Date(current.sentAt).getTime() / 1000
       let nextIsGreater = false
       if (next != null) {
-        const nextUnix = new Date(next.sendTime).getTime() / 1000
+        const nextUnix = new Date(next.sentAt).getTime() / 1000
         const nextDiff = nextUnix - currentUnix
         if (60 * 60 * 2 < nextDiff) {
           nextIsGreater = true
@@ -64,13 +68,13 @@ export class Messages {
 
         const diff = currentUnix - currentDateUnix
         if (60 * 60 * 2 < diff) {
-          currentDate = current.sendTime
-          dateToSet = new Date(current.sendTime)
+          currentDate = current.sentAt
+          dateToSet = new Date(current.sentAt)
           dateHasBeenSet = true
         }
       } else {
-        currentDate = current.sendTime
-        dateToSet = new Date(current.sendTime)
+        currentDate = current.sentAt
+        dateToSet = new Date(current.sentAt)
         dateHasBeenSet = true
       }
 

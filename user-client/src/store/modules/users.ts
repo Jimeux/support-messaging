@@ -13,6 +13,7 @@ export interface UserState {
   activeUser: User | null;
   loadingSummaries: boolean;
   loadingUser: boolean;
+  users: Array<User>;
 }
 
 enum mutations {
@@ -42,7 +43,8 @@ export const users: Module<UserState, RootState> = {
     activeUser: null,
     userSummaries: [],
     loadingSummaries: false,
-    loadingUser: false
+    loadingUser: false,
+    users: []
   },
 
   getters: {},
@@ -60,6 +62,7 @@ export const users: Module<UserState, RootState> = {
     },
 
     [mutations.SET_USER](state: UserState, user: User) {
+      state.users.push(user)
       state.activeUser = user
     },
 
@@ -120,7 +123,11 @@ export const users: Module<UserState, RootState> = {
         ctx.commit(mutations.SELECT_USER, found)
         ctx.commit(mutations.SET_LOADING_USER, true)
 
-        const user = await userRepo.fetchUser(id)
+        let user = ctx.state.users.find(u => u.id === id)
+        if (user == null) {
+          user = await userRepo.fetchUser(id)
+        }
+
         ctx.commit(mutations.SET_USER, user)
       } catch (err) {
         await ctx.dispatch("setSnackbar", {content: err.message, klass: "error"}, {root: true})

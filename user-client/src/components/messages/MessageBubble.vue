@@ -1,7 +1,8 @@
 <template>
-  <div :id="message.message.id" class="pl-2 pr-2">
+  <div :id="message.message.id" class="pl-2 pr-2" @mouseover="showHoverToolbar = true"
+       @mouseleave="showHoverToolbar = false">
     <div v-if="message.date != null" class="date-time">
-      {{dateString}}
+      {{ dateString }}
     </div>
     <v-row no-gutters dense>
       <v-col v-if="!message.message.fromUser" cols="3" class="pa-0 ma-0"></v-col>
@@ -9,15 +10,46 @@
         <div :class="`d-flex ${bubbleClass} ${borderClass === 'only' ? 'only-top' : ''}`">
           <v-avatar class="d-flex" size="30" v-if="showAvatar">
             <img alt="Avatar"
-                 :src="message.message.avatar">
-            <v-icon v-if="!message.message.avatar && message.message.fromUser">send</v-icon>
+                 :src="user.avatar">
+            <v-icon v-if="!user.avatar && message.message.fromUser">send</v-icon>
           </v-avatar>
           <v-avatar class="d-flex" size="30" v-else-if="message.message.fromUser">
           </v-avatar>
-          <span :class="borderClass">{{ message.message.text }}</span>
+          <span :class="borderClass">{{ message.message.content }}</span>
         </div>
       </v-col>
-      <v-col v-if="message.message.fromUser" cols="3" class="pa-0 ma-0"></v-col>
+      <v-col v-if="message.message.fromUser" cols="3" class="pa-0 ma-0">
+        <v-slide-x-transition>
+          <div v-if="showHoverToolbar">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-icon
+                    class="ml-2"
+                    medium
+                    v-bind="attrs"
+                    v-on="on"
+                >
+                  delete
+                </v-icon>
+              </template>
+              <span>Delete</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-icon
+                    class="ml-2"
+                    medium
+                    v-bind="attrs"
+                    v-on="on"
+                >
+                  markunread
+                </v-icon>
+              </template>
+              <span>Mark unread</span>
+            </v-tooltip>
+          </div>
+        </v-slide-x-transition>
+      </v-col>
     </v-row>
   </div>
 </template>
@@ -26,11 +58,16 @@
 import {Prop, Component, Vue} from 'vue-property-decorator'
 import {MessageView, MessageClass} from "@/data/message"
 import dayjs from "dayjs"
+import {User} from "@/data/user";
 
 @Component
 export default class MessageBubble extends Vue {
   @Prop({required: true})
   readonly message!: MessageView
+  @Prop({required: true})
+  readonly user!: User
+
+  showHoverToolbar = false
 
   get dateString(): string {
     if (this.message.date == null) {
@@ -53,7 +90,7 @@ export default class MessageBubble extends Vue {
   get borderClass(): string {
     switch (this.message.klass) {
       case MessageClass.FIRST:
-        return "first"
+        return "first avatar"
       case MessageClass.MIDDLE:
         return "middle"
       case MessageClass.LAST:
@@ -102,6 +139,10 @@ export default class MessageBubble extends Vue {
 
 .message-bubble span.only {
   border-radius: 1.3em;
+}
+
+.avatar {
+  margin-top: 15px;
 }
 
 .sender {
