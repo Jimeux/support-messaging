@@ -23,7 +23,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: !Sub ${AWS::StackName}-alb
-      SecurityGroupIngress: # TODO
+      SecurityGroupIngress: # TODO catchup
         - CidrIp: 0.0.0.0/0
           IpProtocol: TCP
           FromPort: 80
@@ -63,7 +63,7 @@ Resources:
       HealthyThresholdCount: 2
       TargetType: !If [ EC2, "instance", "ip" ]
       TargetGroupAttributes:
-        - Key: deregistration_delay.timeout_seconds # TODO
+        - Key: deregistration_delay.timeout_seconds # TODO catchup
           Value: 30
 
   ListenerRule:

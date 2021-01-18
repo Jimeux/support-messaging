@@ -12,6 +12,6 @@ phases:
   post_build:
     commands:
       - docker push "$IMAGE_URI"
-      - printf '[{"name":"simple-app","imageUri":"%s"}]' "$IMAGE_URI" > images.json # todo extract simple-app
+      - printf '[{"name":"user-service","imageUri":"%s"}]' "$IMAGE_URI" > images.json # todo extract simple-app
 artifacts:
   files: images.json

@@ -1,7 +1,6 @@
 ---
 AWSTemplateFormatVersion: 2010-09-09
 
-
 Parameters:
   Tag:
     Type: String
@@ -13,12 +12,6 @@ Parameters:
     Default: 1
   TargetGroup:
     Type: String
-  LaunchType:
-    Type: String
-    Default: Fargate
-    AllowedValues:
-      - Fargate
-      - EC2
   SourceSecurityGroup:
     Type: AWS::EC2::SecurityGroup::Id
   Subnets:
@@ -26,14 +19,8 @@ Parameters:
   Repository:
     Type: String
 
-
-Conditions:
-  Fargate: !Equals [ !Ref LaunchType, "Fargate" ]
-
-  EC2: !Equals [ !Ref LaunchType, "EC2" ]
-
-
 Resources:
+
   TaskExecutionRole:
     Type: AWS::IAM::Role
     Properties:
@@ -53,47 +40,15 @@ Resources:
     Properties:
       LogGroupName: !Sub /ecs/${AWS::StackName}
 
-  FargateService:
-    Type: AWS::ECS::Service
-    Condition: Fargate
-    Properties:
-      Cluster: !Ref Cluster
-      DesiredCount: !Ref DesiredCount
-      TaskDefinition: !Ref TaskDefinition
-      LaunchType: FARGATE
-      NetworkConfiguration:
-        AwsvpcConfiguration:
-          AssignPublicIp: ENABLED # TODO
-          SecurityGroups:
-            - !Ref SourceSecurityGroup # TODO same as ALB?
-          Subnets: !Ref Subnets
-      LoadBalancers:
-        - ContainerName: simple-app
-          ContainerPort: 80
-          TargetGroupArn: !Ref TargetGroup
-
-  EC2Service:
-    Type: AWS::ECS::Service
-    Condition: EC2
-    Properties:
-      Cluster: !Ref Cluster
-      DesiredCount: !Ref DesiredCount
-      TaskDefinition: !Ref TaskDefinition
-      LaunchType: EC2
-      LoadBalancers:
-        - ContainerName: simple-app
-          ContainerPort: 80
-          TargetGroupArn: !Ref TargetGroup
-
   TaskDefinition:
     Type: AWS::ECS::TaskDefinition
     Properties:
-      Family: !Sub ${AWS::StackName}-simple-app
+      Family: !Sub ${AWS::StackName}-simple-app # TODO catchup
       RequiresCompatibilities:
-        - !If [ Fargate, "FARGATE", "EC2" ]
+        - FARGATE
       Memory: 512
       Cpu: 256
-      NetworkMode: !If [ Fargate, "awsvpc", "bridge" ]
+      NetworkMode: awsvpc
       ExecutionRoleArn: !Ref TaskExecutionRole
       ContainerDefinitions:
         - Name: simple-app
@@ -112,9 +67,28 @@ Resources:
               awslogs-group: !Ref LogGroup
               awslogs-stream-prefix: !Ref AWS::StackName
 
+  FargateService:
+    Type: AWS::ECS::Service
+    Properties:
+      Cluster: !Ref Cluster
+      DesiredCount: !Ref DesiredCount
+      TaskDefinition: !Ref TaskDefinition
+      LaunchType: FARGATE
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED # TODO
+          SecurityGroups:
+            - !Ref SourceSecurityGroup # TODO same as ALB?
+          Subnets: !Ref Subnets
+      LoadBalancers:
+        - ContainerName: simple-app
+          ContainerPort: 80
+          TargetGroupArn: !Ref TargetGroup
 
 Outputs:
   Repository:
     Value: !Ref Repository
   Service:
-    Value: !If [ Fargate, !Ref FargateService, !Ref EC2Service ]
+    Value: FargateService
+    Export:
+      Name: SupportUserService

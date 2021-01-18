@@ -49,7 +49,9 @@ export const messages: Module<MessageState, RootState> = {
   },
 
   getters: {
-    currentMessages: (state) => state.messages.filter(m => m.userId == state.currentUserId),
+    currentMessages: (state) => state.messages
+        .filter(m => m.userId == state.currentUserId)
+        .sort((a, b) => (a.sentAt >= b.sentAt) ? 1 : -1),
     pagingState: (state) => state.pagingStates.find(m => m.userId == state.currentUserId)
   },
 
@@ -59,7 +61,7 @@ export const messages: Module<MessageState, RootState> = {
     },
 
     [mutations.ADD_MESSAGE](state: MessageState, msg: Message) {
-      state.messages = [...state.messages, msg].sort((a, b) => (a.sentAt >= b.sentAt) ? 1 : -1)
+      state.messages = [...state.messages, msg]
     },
 
     [mutations.ADD_MESSAGES](state: MessageState, messages: Array<Message>) {
@@ -84,7 +86,6 @@ export const messages: Module<MessageState, RootState> = {
       }
 
       state.messages = [...messages, ...state.messages]
-          .sort((a, b) => (a.sentAt >= b.sentAt) ? 1 : -1) // TODO better sorting?
     },
 
     [mutations.SAVE_MESSAGE_POSITION](state: MessageState, messageId: number) {

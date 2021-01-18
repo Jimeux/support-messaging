@@ -4,12 +4,16 @@ AWSTemplateFormatVersion: 2010-09-09
 Parameters:
   Name:
     Type: String
+    Default: VPC
   VpcCIDR:
     Type: String
+    Default: 10.215.0.0/16
   SubnetACIDR:
     Type: String
+    Default: 10.215.10.0/24
   SubnetBCIDR:
     Type: String
+    Default: 10.215.20.0/24
 
 Resources:
 
@@ -88,7 +92,11 @@ Resources:
       SubnetId: !Ref SubnetB
 
 Outputs:
-  Subnets:
+  SupportSubnets:
     Value: !Join [ ",", [ !Ref SubnetA, !Ref SubnetB ] ]
-  VpcId:
+    Export:
+      Name: SupportSubnets
+  SupportVPC:
     Value: !Ref VPC
+    Export:
+      Name: SupportVPC
