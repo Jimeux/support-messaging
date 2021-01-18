@@ -10,10 +10,10 @@
 
       <v-list-item-content>
         <v-list-item-title :class="summary.unreadCount > 0 ? 'font-weight-medium' : ''"
-                           v-text="summary.name"></v-list-item-title>
+                           v-text="summary.displayName()"></v-list-item-title>
         <v-list-item-subtitle class="text--primary"
-                              v-text="displayDate(summary.lastSendTime)"></v-list-item-subtitle>
-        <v-list-item-subtitle v-text="summary.lastMessagePreview"></v-list-item-subtitle>
+                              v-text="displayDate(summary.lastSent)"></v-list-item-subtitle>
+        <v-list-item-subtitle v-text="summary.preview"></v-list-item-subtitle>
       </v-list-item-content>
 
       <v-list-item-action>
@@ -22,8 +22,8 @@
         <v-icon v-else color="yellow">star</v-icon>-->
 
         <v-badge v-if="summary.unreadCount > 0"
-                 dot
-                 color="red"></v-badge>
+                 color="red"
+                 :content="summary.unreadCount"></v-badge>
       </v-list-item-action>
     </template>
   </v-list-item>
@@ -42,17 +42,17 @@ export default class UserSummaryItem extends Vue {
   @Prop({required: true})
   readonly summary!: UserSummary
 
-  displayDate(lastSendTime: string): string {
-    if (lastSendTime == null) {
+  displayDate(lastSent: number): string {
+    if (lastSent == null) {
       return ""
     }
 
-    const sendTime = dayjs(lastSendTime)
+    const sendTime = dayjs.unix(lastSent/1000)
     const twoDaysAgo = dayjs().add(-1, "day")
     if (sendTime.isBefore(twoDaysAgo)) {
       return sendTime.format("MM/DD HH:mm")
     }
-    return dayjs(lastSendTime).fromNow()
+    return dayjs(lastSent).fromNow()
   }
 }
 </script>

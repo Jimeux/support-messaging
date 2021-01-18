@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: Microservice ECR Repositories
+Description: Support ECR Repositories
 Resources:
 
   UserServiceRepo:
@@ -8,5 +8,7 @@ Resources:
       RepositoryName: user-service
 
 Outputs:
-  UserServiceRepo:
+  SupportUserServiceRepo:
     Value: !Ref UserServiceRepo
+    Export:
+      Name: SupportUserServiceRepo

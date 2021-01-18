@@ -5,14 +5,19 @@
         <v-img src="http://placekitten.com/220/220"></v-img>
       </v-list-item-avatar>
       <v-toolbar-title>
-        Concierge Messenger
+        Support Messenger
       </v-toolbar-title>
     </v-toolbar>
 
     <div
         :style="`overflow-y: auto; height: ` + height + `px; background: transparent; border-top: 1px solid rgba(255, 255, 255, 0.12); border-right: 1px solid rgba(255, 255, 255, 0.12);`">
 
-      <UserSearchBox class="ma-4" v-if="users.userSummaries.length !== 0" :onSearch="search"/>
+      <UserSearchBox class="mx-4 mt-4 mb-2" v-if="users.userSummaries.length !== 0" :onSearch="search"/>
+
+      <v-tabs fixed-tabs background-color="transparent ma-0">
+        <v-tab>All</v-tab>
+        <v-tab>Mine</v-tab>
+      </v-tabs>
 
       <div v-if="users.loadingSummaries" style="text-align: center;">
         <v-progress-circular :size="50"

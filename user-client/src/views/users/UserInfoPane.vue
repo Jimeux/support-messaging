@@ -17,7 +17,7 @@
         <v-list-item-avatar size="100px">
           <v-img :src="users.activeUser.avatar"></v-img>
         </v-list-item-avatar>
-        <div class="mt-2 mb-3">{{users.activeUser.name}}</div>
+        <div class="mt-2 mb-3">{{users.activeUser.displayName()}}</div>
       </div>
       <div style="border-bottom: 1px solid rgba(255, 255, 255, 0.12);" class="pl-1">
         <v-list style="background: transparent;">

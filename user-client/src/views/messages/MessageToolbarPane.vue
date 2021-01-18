@@ -1,11 +1,16 @@
 <template>
   <v-toolbar flat v-if="users.activeUserSummary" style="background: transparent;">
-    <v-list-item-avatar size="28px">
-      <v-img :src="users.activeUserSummary.avatar"></v-img>
-    </v-list-item-avatar>
-    <v-toolbar-title style="font-size: 110%;">
-      {{users.activeUserSummary.name}}
-    </v-toolbar-title>
+
+    <v-tooltip bottom>
+      <template v-slot:activator="{ on, attrs }">
+        <v-list-item-avatar size="28px" v-bind="attrs"
+                            v-on="on">
+          <v-img :src="users.activeUserSummary.avatar"></v-img>
+        </v-list-item-avatar>
+      </template>
+      <span>{{ users.activeUserSummary.displayName() }}</span>
+    </v-tooltip>
+
     <v-spacer></v-spacer>
     <v-btn icon>
       <v-icon>support_agent</v-icon>

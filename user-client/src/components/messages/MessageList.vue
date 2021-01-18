@@ -13,7 +13,9 @@
       ></v-progress-circular>
     </div>
 
-    <MessageBubble v-for="m in convertedMessages" :ref="`bubbles`" :message="m" :key="m.id"/>
+    <div v-if="currentUser">
+      <MessageBubble v-for="m in convertedMessages" ref="bubbles" :user="currentUser" :message="m" :key="m.id"/>
+    </div>
   </div>
 </template>
 
@@ -21,6 +23,7 @@
 import {Component, Prop, Vue, Watch} from 'vue-property-decorator'
 import Message, {Messages, MessageView} from "@/data/message"
 import MessageBubble from "@/components/messages/MessageBubble.vue"
+import {User} from "@/data/user";
 
 @Component({
   components: {MessageBubble}
@@ -32,8 +35,9 @@ export default class MessageList extends Vue {
   readonly onScrollToTop!: () => void
   @Prop({required: true})
   readonly loadingPage!: boolean
+  @Prop({required: true})
+  readonly currentUser!: User
 
-  currentMessageId: number | null = null
   height = 500
 
   mounted() {
@@ -43,16 +47,17 @@ export default class MessageList extends Vue {
 
   @Watch('messages')
   onMessagesUpdated(newVal: Array<Message>) {
-    if (newVal.length === 0) // changed user
-      this.currentMessageId = null
-
     if (this.currentMessageId == null) {
       this.$nextTick(() => this.setHeight())
     } else {
       const messageId = this.currentMessageId
       this.$nextTick(() => this.scrollToMessage(messageId))
-      this.currentMessageId = null
     }
+  }
+
+  get currentMessageId(): number | null {
+    const pg = this.$store.getters["messages/pagingState"]
+    return pg ? pg.currentMessageId : null;
   }
 
   get loadingMargin(): number {
@@ -66,6 +71,8 @@ export default class MessageList extends Vue {
 
   scrollToMessage(messageId: number) {
     const bubbles = (this.$refs["bubbles"] as Array<Vue>)
+    if (!bubbles) return
+
     for (const b of bubbles) {
       const el = (b.$el as HTMLElement)
       if (parseInt(el.id, 10) === messageId) {
@@ -77,7 +84,6 @@ export default class MessageList extends Vue {
 
   onScroll() {
     if (!this.loadingPage && this.$el.scrollTop === 0 && this.messages.length !== 0) {
-      this.currentMessageId = this.messages[0].id
       this.onScrollToTop()
     }
   }

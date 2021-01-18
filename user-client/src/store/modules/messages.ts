@@ -6,12 +6,18 @@ import MessageRepository from "@/api/messageRepository"
 // todo how to inject?
 const msgRepo = new MessageRepository()
 
-export interface MessageState {
-  messages: Array<Message>;
+export interface PagingState {
+  userId: number;
   currentPage: number;
   hasMore: boolean;
-  currentMessageId: number | null;
+  currentMessageId: number | null; // TODO
+}
+
+export interface MessageState {
+  currentUserId: number | null;
   loadingPage: boolean;
+  messages: Array<Message>;
+  pagingStates: Array<PagingState>;
 }
 
 enum mutations {
@@ -19,7 +25,7 @@ enum mutations {
   ADD_MESSAGES = 'ADD_MESSAGES',
   SAVE_MESSAGE_POSITION = 'SAVE_MESSAGE_POSITION',
   SET_LOADING_PAGE = 'SET_LOADING_PAGE',
-  CLEAR_MESSAGES = 'CLEAR_MESSAGES'
+  SET_CURRENT_USER = 'SET_CURRENT_USER'
 }
 
 export enum MessageActions {
@@ -37,38 +43,58 @@ export const messages: Module<MessageState, RootState> = {
 
   state: {
     messages: [],
-    currentPage: 1,
-    currentMessageId: null,
-    loadingPage: false,
-    hasMore: true
+    pagingStates: [],
+    currentUserId: null,
+    loadingPage: false
   },
 
-  getters: {},
+  getters: {
+    currentMessages: (state) => state.messages
+        .filter(m => m.userId == state.currentUserId)
+        .sort((a, b) => (a.sentAt >= b.sentAt) ? 1 : -1),
+    pagingState: (state) => state.pagingStates.find(m => m.userId == state.currentUserId)
+  },
 
   mutations: {
-    [mutations.CLEAR_MESSAGES](state: MessageState) {
-      // todo initialState?
-      state.messages = []
-      state.currentPage = 1
-      state.currentMessageId = null
-      state.loadingPage = false
-      state.hasMore = true
+    [mutations.SET_CURRENT_USER](state: MessageState, userId: number) {
+      state.currentUserId = userId
     },
 
     [mutations.ADD_MESSAGE](state: MessageState, msg: Message) {
-      state.messages = [...state.messages, msg].sort((a, b) => (a.id >= b.id) ? 1 : -1)
+      state.messages = [...state.messages, msg]
     },
 
     [mutations.ADD_MESSAGES](state: MessageState, messages: Array<Message>) {
+      const pg = state.pagingStates.find(s => s.userId === state.currentUserId)
+
+      const currentMessageId = messages[0].id
+      const hasMore = messages.length == 20
+
+      if (pg == null) {
+        state.pagingStates.push({
+          userId: state.currentUserId!,
+          currentMessageId: currentMessageId,
+          currentPage: 2, // first page already loaded
+          hasMore: hasMore
+        })
+      } else {
+        Object.assign(pg, {
+          currentMessageId: currentMessageId,
+          currentPage: pg.currentPage += 1,
+          hasMore: hasMore
+        })
+      }
+
       state.messages = [...messages, ...state.messages]
-          .sort((a, b) => (a.id >= b.id) ? 1 : -1)
-      state.currentPage += 1
-      if (messages.length < 20) //todo limit const
-        state.hasMore = false
     },
 
     [mutations.SAVE_MESSAGE_POSITION](state: MessageState, messageId: number) {
-      state.currentMessageId = messageId
+      const index = state.pagingStates.findIndex(s => s.userId === state.currentUserId)
+      const pg = state.pagingStates[index]
+      if (pg) {
+        pg.currentMessageId = messageId
+        state.pagingStates.splice(index, 1, pg)
+      }
     },
 
     [mutations.SET_LOADING_PAGE](state: MessageState, loading: boolean) {
@@ -81,9 +107,14 @@ export const messages: Module<MessageState, RootState> = {
       ctx.commit(mutations.ADD_MESSAGE, msg)
     },
 
-    [MessageActions.sendMessage](ctx: ActionContext<MessageState, RootState>, { userId, text }) {
-      const msg = new Message(100, userId, false, text, "", new Date().toJSON())
-      ctx.commit(mutations.ADD_MESSAGE, msg)
+    async [MessageActions.sendMessage](ctx: ActionContext<MessageState, RootState>, {userId, text}) {
+      try {
+        const msg = await msgRepo.create(userId, text)
+        ctx.commit(mutations.ADD_MESSAGE, msg)
+      } catch (err) {
+        console.log(err)
+      } /*finally {
+      }*/
     },
 
     [MessageActions.updateLastReadTime]() {
@@ -92,10 +123,15 @@ export const messages: Module<MessageState, RootState> = {
 
     async [MessageActions.fetchMessages](ctx: ActionContext<MessageState, RootState>, id: number) {
       try {
-        ctx.commit(mutations.CLEAR_MESSAGES)
+        ctx.commit(mutations.SET_CURRENT_USER, id)
         ctx.commit(mutations.SET_LOADING_PAGE, true)
 
-        const messages = await msgRepo.fetchMessages(id, ctx.state.currentPage)
+        const pg = ctx.state.pagingStates.find(s => s.userId === id)
+        if (pg != null) {
+          return
+        }
+
+        const messages = await msgRepo.fetchMessages(id, 1)
         ctx.commit(mutations.ADD_MESSAGES, messages)
       } catch (err) {
         await ctx.dispatch("setSnackbar", {content: err.message, klass: "error"}, {root: true})
@@ -108,13 +144,16 @@ export const messages: Module<MessageState, RootState> = {
       if (ctx.state.loadingPage)
         return // in progress
 
+      const pg = ctx.state.pagingStates.find(s => s.userId === userId)
+      const currentPage = pg == null ? 1 : pg.currentPage
+
       ctx.commit(mutations.SET_LOADING_PAGE, true)
-      if (ctx.state.messages.length !== 0) {
-        ctx.commit(mutations.SAVE_MESSAGE_POSITION, ctx.state.messages[0].id) // todo check length
+      if (ctx.getters.currentMessages.length !== 0) {
+        ctx.commit(mutations.SAVE_MESSAGE_POSITION, ctx.getters.currentMessages[0].id)
       }
 
       try {
-        const messages = await msgRepo.fetchMessages(userId, ctx.state.currentPage)
+        const messages = await msgRepo.fetchMessages(userId, currentPage)
         ctx.commit(mutations.ADD_MESSAGES, messages)
       } catch (err) {
         await ctx.dispatch("setSnackbar", {content: err.message, klass: "error"}, {root: true})
