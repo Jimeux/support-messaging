@@ -6,11 +6,9 @@ Parameters:
     Description: Your username on GitHub.
   GitHubRepo:
     Type: String
-    Default: ecs-demo-php-simple-app
     Description: The repo name of the sample service.
   GitHubBranch:
     Type: String
-    Default: master
     Description: The branch of the repo to continuously deploy.
   GitHubToken:
     Type: String
@@ -21,7 +19,7 @@ Resources:
   DeploymentPipeline:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: pipeline.yml
+      TemplateURL: ./pipeline.yml
       Parameters:
         Cluster: !ImportValue SupportCluster
         Service: !ImportValue SupportUserService

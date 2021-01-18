@@ -43,7 +43,7 @@ Resources:
   TaskDefinition:
     Type: AWS::ECS::TaskDefinition
     Properties:
-      Family: !Sub ${AWS::StackName}-simple-app # TODO catchup
+      Family: !Sub ${AWS::StackName}-user-service # TODO catchup
       RequiresCompatibilities:
         - FARGATE
       Memory: 512
@@ -51,7 +51,7 @@ Resources:
       NetworkMode: awsvpc
       ExecutionRoleArn: !Ref TaskExecutionRole
       ContainerDefinitions:
-        - Name: simple-app
+        - Name: user-service
           Image: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${Repository}:${Tag}
           Essential: true
           Memory: 256
@@ -81,7 +81,7 @@ Resources:
             - !Ref SourceSecurityGroup # TODO same as ALB?
           Subnets: !Ref Subnets
       LoadBalancers:
-        - ContainerName: simple-app
+        - ContainerName: user-service
           ContainerPort: 80
           TargetGroupArn: !Ref TargetGroup
 
@@ -89,6 +89,6 @@ Outputs:
   Repository:
     Value: !Ref Repository
   Service:
-    Value: FargateService
+    Value: !Ref FargateService
     Export:
       Name: SupportUserService
