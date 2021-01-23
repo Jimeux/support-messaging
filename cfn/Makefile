@@ -30,7 +30,7 @@ deploy-ecs: package-ecs
 	aws cloudformation deploy \
 --capabilities CAPABILITY_IAM \
 --template-file ./tmp/ecs.yml \
---stack-name SupportECS || rm -fr ./tmp
+--stack-name SupportECS || true
 	rm -fr ./tmp
 
 delete-ecs:
@@ -53,7 +53,7 @@ deploy-pipeline: package-pipeline
 --parameter-overrides "GitHubUser=${GITHUB_USER}" \
 "GitHubRepo=${GITHUB_REPO}" \
 "GitHubBranch=master" \
-"GitHubToken=${GITHUB_TOKEN}" || rm -fr tmp
+"GitHubToken=${GITHUB_TOKEN}" || true
 	rm -fr ./tmp
 
 delete-pipeline:
