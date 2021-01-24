@@ -21,6 +21,7 @@ Resources:
     Properties:
       TemplateURL: ./pipeline.yml
       Parameters:
+        Name: user-service
         Cluster: !ImportValue SupportCluster
         Service: !ImportValue SupportUserService
         Repository: !ImportValue SupportUserServiceRepo
@@ -35,6 +36,7 @@ Resources:
     Properties:
       TemplateURL: ./pipeline.yml
       Parameters:
+        Name: support-service
         Cluster: !ImportValue SupportCluster
         Service: !ImportValue SupportSupportService
         Repository: !ImportValue SupportSupportServiceRepo
