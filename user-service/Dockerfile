@@ -1,15 +1,19 @@
+ARG SERVICE
+
 FROM golang:1.15.7-buster AS builder
-WORKDIR /go/src/github.com/Jimeux/support-messaging/user-service
+WORKDIR /go/src/github.com/Jimeux/support-messaging/${SERVICE}
 COPY . .
-# build statically linked binary
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o /go/bin/user-service
+# Build statically linked binary
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o /go/bin/service
 
 FROM scratch
 
-# don't run as root user
+# Run as non-privileged user
 COPY --from=builder /etc/passwd /etc/passwd
 USER nobody
 
-COPY --from=builder /go/bin/user-service /user-service
+COPY --from=builder /go/bin/service /service
 
-ENTRYPOINT ["/user-service"]
+EXPOSE 8080
+
+ENTRYPOINT ["/service"]

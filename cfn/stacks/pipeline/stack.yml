@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: Todo
+Description: Top-level pipeline stack
 Parameters:
   GitHubUser:
     Type: String
@@ -16,7 +16,7 @@ Parameters:
 
 Resources:
 
-  DeploymentPipeline:
+  UserServicePipeline:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: ./pipeline.yml
@@ -24,6 +24,7 @@ Resources:
         Cluster: !ImportValue SupportCluster
         Service: !ImportValue SupportUserService
         Repository: !ImportValue SupportUserServiceRepo
+        BuildSpecPath: ./user-service/buildspec.yml
         GitHubUser: !Ref GitHubUser
         GitHubToken: !Ref GitHubToken
         GitHubRepo: !Ref GitHubRepo

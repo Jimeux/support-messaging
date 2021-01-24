@@ -5,20 +5,18 @@ services:
     build:
       context: ./user-service
       args:
-        MODULE: github.com/Jimeux/support-messaging/user-service
+        SERVICE: user-service
     environment:
       SERVER_PORT: 8080
     ports:
       - "8001:8080"
-    command: ./bin/service
 
   support-service:
     build:
       context: ./support-service
       args:
-        MODULE: github.com/Jimeux/support-messaging/support-service
+        SERVICE: support-service
     environment:
-      SERVER_PORT: 3000
+      SERVER_PORT: 8080
     ports:
-      - "8002:3000"
-    command: ./bin/service
+      - "8002:8080"
