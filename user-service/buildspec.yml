@@ -1,21 +1,21 @@
 version: 0.2
 
-  phases:
-    install:
-      runtime-versions:
-        docker: 19
-    pre_build:
-      commands:
-        - $(aws ecr get-login --no-include-email)
-        - TAG="$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 8)"
-        - IMAGE_URI="${REPOSITORY_URI}:${TAG}"
-    build:
-      commands:
-        - docker build --tag "${IMAGE_URI}" ./user-service --build-arg SERVICE="user-service"
-    post_build:
-      commands:
-        - docker push "${IMAGE_URI}"
-        - printf '[{"name":"user-service","imageUri":"%s"}]' "${IMAGE_URI}" > images.json
+phases:
+  install:
+    runtime-versions:
+      docker: 19
+  pre_build:
+    commands:
+      - $(aws ecr get-login --no-include-email)
+      - TAG="$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 8)"
+      - IMAGE_URI="${REPOSITORY_URI}:${TAG}"
+  build:
+    commands:
+      - docker build --tag "${IMAGE_URI}" ./user-service --build-arg SERVICE="user-service"
+  post_build:
+    commands:
+      - docker push "${IMAGE_URI}"
+      - printf '[{"name":"user-service","imageUri":"%s"}]' "${IMAGE_URI}" > images.json
 
-  artifacts:
-    files: images.json
+artifacts:
+  files: images.json

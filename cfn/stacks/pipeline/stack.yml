@@ -24,7 +24,7 @@ Resources:
         Cluster: !ImportValue SupportCluster
         Service: !ImportValue SupportUserService
         Repository: !ImportValue SupportUserServiceRepo
-        BuildSpecPath: ./user-service/buildspec.yml
+        BuildSpecPath: user-service/buildspec.yml
         GitHubUser: !Ref GitHubUser
         GitHubToken: !Ref GitHubToken
         GitHubRepo: !Ref GitHubRepo
