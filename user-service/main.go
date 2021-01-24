@@ -57,7 +57,7 @@ func main() {
 func Test(w http.ResponseWriter, r *http.Request) {
 	res := struct {
 		Msg string `json:"msg"`
-	}{Msg: fmt.Sprintf("Welcome to the Built Minimally™ user-service 💀️🙋🏻💀️ (%s)", r.RequestURI)}
+	}{Msg: fmt.Sprintf("Welcome to the Built Minimally™ deployed-via-CodeBuild© user-service 💀️🙋🏻💀️ (%s)", r.RequestURI)}
 
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(res); err != nil {
