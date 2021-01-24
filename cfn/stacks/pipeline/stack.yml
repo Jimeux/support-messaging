@@ -29,3 +29,17 @@ Resources:
         GitHubToken: !Ref GitHubToken
         GitHubRepo: !Ref GitHubRepo
         GitHubBranch: !Ref GitHubBranch
+
+  SupportServicePipeline:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: ./pipeline.yml
+      Parameters:
+        Cluster: !ImportValue SupportCluster
+        Service: !ImportValue SupportSupportService
+        Repository: !ImportValue SupportSupportServiceRepo
+        BuildSpecPath: support-service/buildspec.yml
+        GitHubUser: !Ref GitHubUser
+        GitHubToken: !Ref GitHubToken
+        GitHubRepo: !Ref GitHubRepo
+        GitHubBranch: !Ref GitHubBranch
