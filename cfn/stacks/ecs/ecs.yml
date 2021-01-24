@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: Todo
+Description: Top-level ECS stack
 
 Resources:
 
@@ -16,22 +16,38 @@ Resources:
     Properties:
       TemplateURL: ./cluster.yml
       Parameters:
-        SourceSecurityGroup: !GetAtt LoadBalancer.Outputs.SecurityGroup
         VpcId: !ImportValue SupportVPC
         Subnets: !ImportValue SupportSubnets
 
-  Service:
+  UserService:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: ./service.yml
       Parameters:
         Cluster: !GetAtt Cluster.Outputs.ClusterName
-        TargetGroup: !GetAtt LoadBalancer.Outputs.TargetGroup
+        TargetGroup: !GetAtt LoadBalancer.Outputs.UserServiceTargetGroup
         SourceSecurityGroup: !GetAtt LoadBalancer.Outputs.SecurityGroup
+        VpcId: !ImportValue SupportVPC
         Subnets: !ImportValue SupportSubnets
         Repository: !ImportValue SupportUserServiceRepo
+        Name: user-service
+        ExportName: SupportUserService
+
+  SupportService:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: ./service.yml
+      Parameters:
+        Cluster: !GetAtt Cluster.Outputs.ClusterName
+        TargetGroup: !GetAtt LoadBalancer.Outputs.SupportServiceTargetGroup
+        SourceSecurityGroup: !GetAtt LoadBalancer.Outputs.SecurityGroup
+        VpcId: !ImportValue SupportVPC
+        Subnets: !ImportValue SupportSubnets
+        Repository: !ImportValue SupportSupportServiceRepo
+        Name: support-service
+        ExportName: SupportSupportService
 
 Outputs:
   ServiceUrl:
-    Description: The sample service that is being continuously deployed.
+    Description: The load balancer URL
     Value: !GetAtt LoadBalancer.Outputs.ServiceUrl

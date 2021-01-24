@@ -3,19 +3,10 @@ AWSTemplateFormatVersion: 2010-09-09
 
 
 Parameters:
-  LaunchType:
-    Type: String
-    Default: Fargate
-    AllowedValues:
-      - Fargate
-      - EC2
   Subnets:
     Type: List<AWS::EC2::Subnet::Id>
   VpcId:
     Type: String
-
-Conditions:
-  EC2: !Equals [ !Ref LaunchType, "EC2" ]
 
 
 Resources:
@@ -23,7 +14,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: !Sub ${AWS::StackName}-alb
-      SecurityGroupIngress: # TODO catchup
+      SecurityGroupIngress:
         - CidrIp: 0.0.0.0/0
           IpProtocol: TCP
           FromPort: 80
@@ -42,52 +33,83 @@ Resources:
     Properties:
       LoadBalancerArn: !Ref LoadBalancer
       Port: 80
-      Protocol: HTTP
+      Protocol: HTTP # TODO HTTPS https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html
       DefaultActions:
         - Type: forward
-          TargetGroupArn: !Ref TargetGroup
+          TargetGroupArn: !Ref UserServiceTargetGroup
 
-  TargetGroup:
+  UserServiceTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     DependsOn: LoadBalancer
     Properties:
       VpcId: !Ref VpcId
-      Port: 80
-      Protocol: HTTP
+      Port: 8080
+      Protocol: HTTP # TODO HTTPS
       Matcher:
         HttpCode: 200-299
       HealthCheckIntervalSeconds: 10
-      HealthCheckPath: /
+      HealthCheckPath: /user
       HealthCheckProtocol: HTTP
       HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 2
-      TargetType: !If [ EC2, "instance", "ip" ]
+      TargetType: ip
       TargetGroupAttributes:
-        - Key: deregistration_delay.timeout_seconds # TODO catchup
+        - Key: deregistration_delay.timeout_seconds
           Value: 30
 
-  ListenerRule:
+  UserServiceListenerRule:
     Type: AWS::ElasticLoadBalancingV2::ListenerRule
     Properties:
       ListenerArn: !Ref LoadBalancerListener
-      Priority: 1
+      Priority: 10
       Conditions:
-          # TODO how to do path-based forwarding??
         - Field: path-pattern
           Values:
-            - /
+            - /user
       Actions:
-        - TargetGroupArn: !Ref TargetGroup
+        - TargetGroupArn: !Ref UserServiceTargetGroup
+          Type: forward
+
+  SupportServiceTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    DependsOn: LoadBalancer
+    Properties:
+      VpcId: !Ref VpcId
+      Port: 8080
+      Protocol: HTTP # TODO HTTPS
+      Matcher:
+        HttpCode: 200-299
+      HealthCheckIntervalSeconds: 10
+      HealthCheckPath: /support
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 2
+      TargetType: ip
+      TargetGroupAttributes:
+        - Key: deregistration_delay.timeout_seconds
+          Value: 30
+
+  SupportServiceListenerRule:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      ListenerArn: !Ref LoadBalancerListener
+      Priority: 20
+      Conditions:
+        - Field: path-pattern
+          Values:
+            - /support
+      Actions:
+        - TargetGroupArn: !Ref SupportServiceTargetGroup
           Type: forward
 
 
 Outputs:
-  TargetGroup:
-    Value: !Ref TargetGroup
-
+  UserServiceTargetGroup:
+    Value: !Ref UserServiceTargetGroup
+  SupportServiceTargetGroup:
+    Value: !Ref SupportServiceTargetGroup
   ServiceUrl:
     Description: URL of the load balancer for the sample service.
     Value: !Sub http://${LoadBalancer.DNSName}
-
   SecurityGroup:
     Value: !Ref SecurityGroup

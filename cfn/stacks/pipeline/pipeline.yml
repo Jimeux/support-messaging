@@ -18,6 +18,8 @@ Parameters:
     Type: String
   Service:
     Type: String
+  BuildSpecPath:
+    Type: String
 
 Resources:
 
@@ -109,27 +111,7 @@ Resources:
         Type: CODEPIPELINE
       Source:
         Type: CODEPIPELINE
-        BuildSpec: |
-          version: 0.2
-
-          phases:
-            install:
-              runtime-versions:
-                docker: 18
-            pre_build:
-              commands:
-                - $(aws ecr get-login --no-include-email)
-                - TAG="$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 8)"
-                - IMAGE_URI="${REPOSITORY_URI}:${TAG}"
-            build:
-              commands:
-                - docker build --tag "${IMAGE_URI}" ./user-service # TODO extract name
-            post_build:
-              commands:
-                - docker push "${IMAGE_URI}"
-                - printf '[{"name":"user-service","imageUri":"%s"}]' "${IMAGE_URI}" > images.json # todo extract user-service
-          artifacts:
-            files: images.json
+        BuildSpec: !Ref BuildSpecPath
       Environment:
         ComputeType: BUILD_GENERAL1_SMALL
         Image: aws/codebuild/standard:4.0
@@ -144,6 +126,8 @@ Resources:
         Type: LOCAL
         Modes:
           - LOCAL_DOCKER_LAYER_CACHE
+          - LOCAL_SOURCE_CACHE
+          - LOCAL_CUSTOM_CACHE
       Name: !Ref AWS::StackName
       ServiceRole: !Ref CodeBuildServiceRole
 

@@ -1,14 +1,19 @@
-ARG MODULE
+ARG SERVICE
 
-# build
-FROM golang:1.14.0-alpine AS build
-WORKDIR /go/src/$MODULE
-COPY . /go/src/$MODULE
-RUN go build -o bin/service .
+FROM golang:1.15.7-buster AS builder
+WORKDIR /go/src/github.com/Jimeux/support-messaging/${SERVICE}
+COPY . .
+# Build statically linked binary
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o /go/bin/service
 
-# run
-FROM alpine
-WORKDIR /go/src/$MODULE
-COPY --from=build /go/src/$MODULE/bin/service /go/src/$MODULE/bin/service
+FROM scratch
 
-CMD ["./bin/service"]
+# Run as non-privileged user
+COPY --from=builder /etc/passwd /etc/passwd
+USER nobody
+
+COPY --from=builder /go/bin/service /service
+
+EXPOSE 8080
+
+ENTRYPOINT ["/service"]

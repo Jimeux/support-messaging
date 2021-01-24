@@ -36,9 +36,7 @@ func main() {
 		signal.Notify(shutdownSignal, syscall.SIGINT)  // ctrl+C
 		signal.Notify(shutdownSignal, syscall.SIGTERM) // docker stop
 		// Block while waiting for shutdownSignal to receive a signal
-		a := <-shutdownSignal
-		fmt.Print("Received: ")
-		fmt.Println(a)
+		<-shutdownSignal
 
 		// Initiate graceful shut down
 		if err := server.Shutdown(context.Background()); err != nil {

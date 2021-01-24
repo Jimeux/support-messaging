@@ -14,9 +14,18 @@ Parameters:
     Type: String
   SourceSecurityGroup:
     Type: AWS::EC2::SecurityGroup::Id
+  VpcId:
+    Type: String
   Subnets:
     Type: List<AWS::EC2::Subnet::Id>
   Repository:
+    Type: String
+  ContainerPort:
+    Type: Number
+    Default: 8080
+  Name:
+    Type: String
+  ExportName:
     Type: String
 
 Resources:
@@ -28,22 +37,33 @@ Resources:
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
-          - Action: sts:AssumeRole # TODO
+          - Action: sts:AssumeRole # TODO catchup
             Effect: Allow
             Principal:
               Service: ecs-tasks.amazonaws.com
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
 
+  ContainerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: SupportService ContainerSecurityGroup
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: !Ref ContainerPort
+          ToPort: !Ref ContainerPort
+          SourceSecurityGroupId: !Ref SourceSecurityGroup
+
   LogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub /ecs/${AWS::StackName}
+      LogGroupName: !Sub /ecs/${AWS::StackName}/${Name}
 
   TaskDefinition:
     Type: AWS::ECS::TaskDefinition
     Properties:
-      Family: !Sub ${AWS::StackName}-user-service # TODO catchup
+      Family: !Sub ${AWS::StackName}-${Name} # TODO catchup
       RequiresCompatibilities:
         - FARGATE
       Memory: 512
@@ -51,15 +71,15 @@ Resources:
       NetworkMode: awsvpc
       ExecutionRoleArn: !Ref TaskExecutionRole
       ContainerDefinitions:
-        - Name: user-service
+        - Name: !Ref Name
           Image: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${Repository}:${Tag}
           Essential: true
           Memory: 256
           PortMappings:
-            - ContainerPort: 80
+            - ContainerPort: !Ref ContainerPort
           Environment:
             - Name: SERVER_PORT
-              Value: 80
+              Value: !Ref ContainerPort
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -76,13 +96,13 @@ Resources:
       LaunchType: FARGATE
       NetworkConfiguration:
         AwsvpcConfiguration:
-          AssignPublicIp: ENABLED # TODO
+          AssignPublicIp: ENABLED # TODO verify alternatives
           SecurityGroups:
-            - !Ref SourceSecurityGroup # TODO same as ALB?
+            - !Ref ContainerSecurityGroup
           Subnets: !Ref Subnets
       LoadBalancers:
-        - ContainerName: user-service
-          ContainerPort: 80
+        - ContainerName: !Ref Name
+          ContainerPort: !Ref ContainerPort
           TargetGroupArn: !Ref TargetGroup
 
 Outputs:
@@ -91,4 +111,4 @@ Outputs:
   Service:
     Value: !Ref FargateService
     Export:
-      Name: SupportUserService
+      Name: !Ref ExportName

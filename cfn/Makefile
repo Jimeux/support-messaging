@@ -58,3 +58,8 @@ deploy-pipeline: package-pipeline
 
 delete-pipeline:
 	aws cloudformation delete-stack --stack-name SupportPipeline
+
+
+# Services
+deploy-user-service:
+	aws codepipeline start-pipeline-execution --name SupportPipeline-DeploymentPipeline-19WVR54GIHMES-Pipeline-R4FL5A2XKHKI

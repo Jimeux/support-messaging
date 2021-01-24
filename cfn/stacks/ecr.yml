@@ -7,8 +7,18 @@ Resources:
     Properties:
       RepositoryName: user-service
 
+  SupportServiceRepo:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: support-service
+
+
 Outputs:
   SupportUserServiceRepo:
     Value: !Ref UserServiceRepo
     Export:
       Name: SupportUserServiceRepo
+  SupportSupportServiceRepo:
+    Value: !Ref SupportServiceRepo
+    Export:
+      Name: SupportSupportServiceRepo
