@@ -4,10 +4,9 @@ import (
 	"context"
 	"errors"
 
-	"github.com/Jimeux/support-system/support-service/src/api/responses"
-
-	"github.com/Jimeux/support-system/support-service/src/domain/message"
-	"github.com/Jimeux/support-system/support-service/src/domain/user"
+	"github.com/Jimeux/support-messaging/support-service/src/api/responses"
+	"github.com/Jimeux/support-messaging/support-service/src/domain/message"
+	"github.com/Jimeux/support-messaging/support-service/src/domain/user"
 )
 
 type UserService struct {

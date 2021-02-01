@@ -5,10 +5,10 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 
-	"github.com/Jimeux/support-system/support-service/config"
-	"github.com/Jimeux/support-system/support-service/src/domain/message"
-	"github.com/Jimeux/support-system/support-service/src/domain/staff"
-	"github.com/Jimeux/support-system/support-service/src/domain/user"
+	"github.com/Jimeux/support-messaging/support-service/config"
+	"github.com/Jimeux/support-messaging/support-service/src/domain/message"
+	"github.com/Jimeux/support-messaging/support-service/src/domain/staff"
+	"github.com/Jimeux/support-messaging/support-service/src/domain/user"
 )
 
 const (

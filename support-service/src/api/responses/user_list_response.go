@@ -3,8 +3,8 @@ package responses
 import (
 	"fmt"
 
-	"github.com/Jimeux/support-system/support-service/src/domain/message"
-	"github.com/Jimeux/support-system/support-service/src/domain/user"
+	"github.com/Jimeux/support-messaging/support-service/src/domain/message"
+	"github.com/Jimeux/support-messaging/support-service/src/domain/user"
 )
 
 type UserListItem struct {

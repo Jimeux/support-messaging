@@ -3,7 +3,7 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/Jimeux/support-system/support-service/src/app/services"
+	"github.com/Jimeux/support-messaging/support-service/src/app/services"
 )
 
 type UserHandler struct {

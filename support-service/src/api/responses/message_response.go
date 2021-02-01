@@ -1,7 +1,7 @@
 package responses
 
 import (
-	"github.com/Jimeux/support-system/support-service/src/domain/message"
+	"github.com/Jimeux/support-messaging/support-service/src/domain/message"
 )
 
 type Message struct {

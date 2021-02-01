@@ -4,9 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/Jimeux/support-system/support-service/src/api/requests"
-
-	"github.com/Jimeux/support-system/support-service/src/app/services"
+	"github.com/Jimeux/support-messaging/support-service/src/api/requests"
+	"github.com/Jimeux/support-messaging/support-service/src/app/services"
 )
 
 type MessageHandler struct {

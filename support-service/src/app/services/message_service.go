@@ -3,10 +3,9 @@ package services
 import (
 	"context"
 
-	"github.com/Jimeux/support-system/support-service/src/api/requests"
-
-	"github.com/Jimeux/support-system/support-service/src/api/responses"
-	"github.com/Jimeux/support-system/support-service/src/domain/message"
+	"github.com/Jimeux/support-messaging/support-service/src/api/requests"
+	"github.com/Jimeux/support-messaging/support-service/src/api/responses"
+	"github.com/Jimeux/support-messaging/support-service/src/domain/message"
 )
 
 type MessageService struct {
