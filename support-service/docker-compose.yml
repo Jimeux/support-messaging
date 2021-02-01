@@ -1,0 +1,11 @@
+version: "3.8"
+services:
+  mysql:
+    image: mysql:5.7
+    container_name: ${SUPPORT_DB_CONTAINER}
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    ports:
+      - "${SUPPORT_DB_PORT}:3306"
+    volumes:
+      - .local/mysql5.7:/var/lib/mysql

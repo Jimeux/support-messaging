@@ -104,7 +104,7 @@ Resources:
 
   ArtifactBucket:
     Type: AWS::S3::Bucket
-    # DeletionPolicy: Retain TODO catchup
+    DeletionPolicy: Delete
 
   CodeBuildProject:
     Type: AWS::CodeBuild::Project

@@ -2,11 +2,6 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: Support ECR Repositories
 Resources:
 
-  UserServiceRepo:
-    Type: AWS::ECR::Repository
-    Properties:
-      RepositoryName: user-service
-
   SupportServiceRepo:
     Type: AWS::ECR::Repository
     Properties:
@@ -14,10 +9,6 @@ Resources:
 
 
 Outputs:
-  SupportUserServiceRepo:
-    Value: !Ref UserServiceRepo
-    Export:
-      Name: SupportUserServiceRepo
   SupportSupportServiceRepo:
     Value: !Ref SupportServiceRepo
     Export:

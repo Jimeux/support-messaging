@@ -2,15 +2,14 @@
 AWSTemplateFormatVersion: 2010-09-09
 
 Parameters:
-  Tag:
-    Type: String
-    Default: latest
   Cluster:
     Type: String
   DesiredCount:
     Type: Number
     Default: 1
-  TargetGroup:
+  LoadBalancer:
+    Type: String
+  LoadBalancerListener:
     Type: String
   SourceSecurityGroup:
     Type: AWS::EC2::SecurityGroup::Id
@@ -27,6 +26,13 @@ Parameters:
     Type: String
   ExportName:
     Type: String
+  PathPattern:
+    Type: String
+  HealthCheckPath:
+    Type: String
+  ClientDomain:
+    Type: String
+
 
 Resources:
 
@@ -37,12 +43,22 @@ Resources:
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
-          - Action: sts:AssumeRole # TODO catchup
+          - Action: sts:AssumeRole
             Effect: Allow
             Principal:
               Service: ecs-tasks.amazonaws.com
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      Policies:
+        - PolicyName: !Sub EcsTaskExecutionRole-${AWS::StackName}-TaskExec
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ssm:GetParameters
+                Resource:
+                  - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/support-*
 
   ContainerSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -63,13 +79,14 @@ Resources:
   TaskDefinition:
     Type: AWS::ECS::TaskDefinition
     Properties:
-      Family: !Sub ${AWS::StackName}-${Name} # TODO catchup
+      Family: !Sub ${AWS::StackName}-${Name}
       RequiresCompatibilities:
         - FARGATE
       Memory: 512
       Cpu: 256
       NetworkMode: awsvpc
-      ExecutionRoleArn: !Ref TaskExecutionRole
+      ExecutionRoleArn: !GetAtt TaskExecutionRole.Arn
+      TaskRoleArn: !GetAtt TaskExecutionRole.Arn
       ContainerDefinitions:
         - Name: !Ref Name
           Image: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${Repository}:${Tag}
@@ -78,8 +95,21 @@ Resources:
           PortMappings:
             - ContainerPort: !Ref ContainerPort
           Environment:
-            - Name: SERVER_PORT
+            - Name: SUPPORT_SERVER_PORT
               Value: !Ref ContainerPort
+            - Name: SUPPORT_CLIENT_DOMAIN
+              Value: !Ref ClientDomain
+            - Name: SUPPORT_DB_USER
+              Value: dbuser
+            - Name: SUPPORT_DB_HOST
+              Value: !ImportValue SupportDBInstanceEndpoint
+            - Name: SUPPORT_DB_PORT
+              Value: 3306
+            - Name: SUPPORT_DB_NAME
+              Value: support
+          Secrets:
+            - Name: SUPPORT_DB_PASSWORD
+              ValueFrom: support-master-user-password
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -96,14 +126,45 @@ Resources:
       LaunchType: FARGATE
       NetworkConfiguration:
         AwsvpcConfiguration:
-          AssignPublicIp: ENABLED # TODO verify alternatives
+          AssignPublicIp: ENABLED
           SecurityGroups:
             - !Ref ContainerSecurityGroup
           Subnets: !Ref Subnets
       LoadBalancers:
         - ContainerName: !Ref Name
           ContainerPort: !Ref ContainerPort
-          TargetGroupArn: !Ref TargetGroup
+          TargetGroupArn: !Ref ServiceTargetGroup
+
+  ServiceTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      VpcId: !Ref VpcId
+      Port: 8080
+      Protocol: HTTP
+      Matcher:
+        HttpCode: 200-299
+      HealthCheckIntervalSeconds: 10
+      HealthCheckPath: !Ref HealthCheckPath
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 2
+      TargetType: ip
+      TargetGroupAttributes:
+        - Key: deregistration_delay.timeout_seconds
+          Value: 30
+
+  ServiceListenerRule:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      ListenerArn: !Ref LoadBalancerListener
+      Priority: 10
+      Conditions:
+        - Field: path-pattern
+          Values:
+            - !Ref PathPattern
+      Actions:
+        - TargetGroupArn: !Ref ServiceTargetGroup
+          Type: forward
 
 Outputs:
   Repository:

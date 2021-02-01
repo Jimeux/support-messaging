@@ -1,7 +1,24 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: Top-level ECS stack
 
+Parameters:
+  DomainName:
+    Type: String
+    Description: Domain for the load balancer
+  ClientDomain:
+    Type: String
+    Description: Domain of the client app for CORS settings
+  HostedZoneId:
+    Type: String
+    Description: HostedZoneId of the domains
+
+
 Resources:
+
+  Cluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: !Ref AWS::StackName
 
   LoadBalancer:
     Type: AWS::CloudFormation::Stack
@@ -9,43 +26,28 @@ Resources:
       TemplateURL: ./load-balancer.yml
       Parameters:
         VpcId: !ImportValue SupportVPC
-        Subnets: !ImportValue SupportSubnets
-
-  Cluster:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: ./cluster.yml
-      Parameters:
-        VpcId: !ImportValue SupportVPC
-        Subnets: !ImportValue SupportSubnets
-
-  UserService:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: ./service.yml
-      Parameters:
-        Cluster: !GetAtt Cluster.Outputs.ClusterName
-        TargetGroup: !GetAtt LoadBalancer.Outputs.UserServiceTargetGroup
-        SourceSecurityGroup: !GetAtt LoadBalancer.Outputs.SecurityGroup
-        VpcId: !ImportValue SupportVPC
-        Subnets: !ImportValue SupportSubnets
-        Repository: !ImportValue SupportUserServiceRepo
-        Name: user-service
-        ExportName: SupportUserService
+        Subnets: !ImportValue SupportPublicSubnets
+        DomainName: !Ref DomainName
+        HostedZoneId: !Ref HostedZoneId
 
   SupportService:
     Type: AWS::CloudFormation::Stack
+    DependsOn: [LoadBalancer, Cluster]
     Properties:
       TemplateURL: ./service.yml
       Parameters:
-        Cluster: !GetAtt Cluster.Outputs.ClusterName
-        TargetGroup: !GetAtt LoadBalancer.Outputs.SupportServiceTargetGroup
+        Cluster: !Ref Cluster
+        LoadBalancer: !GetAtt LoadBalancer.Outputs.LoadBalancer
+        LoadBalancerListener: !GetAtt LoadBalancer.Outputs.Listener
         SourceSecurityGroup: !GetAtt LoadBalancer.Outputs.SecurityGroup
         VpcId: !ImportValue SupportVPC
-        Subnets: !ImportValue SupportSubnets
+        Subnets: !ImportValue SupportPublicSubnets
         Repository: !ImportValue SupportSupportServiceRepo
         Name: support-service
         ExportName: SupportSupportService
+        PathPattern: "/support/*"
+        HealthCheckPath: "/support/"
+        ClientDomain: !Ref ClientDomain
 
 Outputs:
   ServiceUrl:

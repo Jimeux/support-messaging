@@ -7,13 +7,19 @@ Parameters:
     Default: VPC
   VpcCIDR:
     Type: String
-    Default: 10.215.0.0/16
-  SubnetACIDR:
+    Default: 10.1.0.0/16
+  PublicSubnetACIDR:
     Type: String
-    Default: 10.215.10.0/24
-  SubnetBCIDR:
+    Default: 10.1.10.0/24
+  PublicSubnetBCIDR:
     Type: String
-    Default: 10.215.20.0/24
+    Default: 10.1.20.0/24
+  PrivateSubnetACIDR:
+    Type: String
+    Default: 10.1.100.0/24
+  PrivateSubnetBCIDR:
+    Type: String
+    Default: 10.1.200.0/24
 
 Resources:
 
@@ -23,17 +29,12 @@ Resources:
       CidrBlock: !Ref VpcCIDR
       EnableDnsSupport: true
       EnableDnsHostnames: true
-      Tags:
-        - Key: Name
-          Value: !Ref Name
+
+  # ----------- Public --------------- #
 
   InternetGateway:
     Type: AWS::EC2::InternetGateway
     DependsOn: VPC
-    Properties:
-      Tags:
-        - Key: Name
-          Value: !Ref Name
 
   InternetGatewayAttachment:
     Type: AWS::EC2::VPCGatewayAttachment
@@ -41,62 +42,111 @@ Resources:
       InternetGatewayId: !Ref InternetGateway
       VpcId: !Ref VPC
 
-  SubnetA:
+  PublicSubnetA:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref VPC
       AvailabilityZone: !Select [0, !GetAZs '']
-      # MapPublicIpOnLaunch: true
-      CidrBlock: !Ref SubnetACIDR
-      Tags:
-        - Key: Name
-          Value: !Sub ${Name} (Public) A
+      CidrBlock: !Ref PublicSubnetACIDR
 
-  SubnetB:
+  PublicSubnetB:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref VPC
       AvailabilityZone: !Select [1, !GetAZs '']
-      # MapPublicIpOnLaunch: true
-      CidrBlock: !Ref SubnetBCIDR
-      Tags:
-        - Key: Name
-          Value: !Sub ${Name} (Public) B
+      CidrBlock: !Ref PublicSubnetBCIDR
 
-  RouteTable:
+  PublicRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId: !Ref VPC
-      Tags:
-        - Key: Name
-          Value: !Ref Name
 
-  DefaultRoute:
+  DefaultPublicRoute:
     Type: AWS::EC2::Route
     DependsOn: InternetGatewayAttachment
     Properties:
-      RouteTableId: !Ref RouteTable
+      RouteTableId: !Ref PublicRouteTable
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId: !Ref InternetGateway
 
-  SubnetARouteTableAssociation:
+  PublicSubnetARouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      RouteTableId: !Ref RouteTable
-      SubnetId: !Ref SubnetA
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnetA
 
-  SubnetBRouteTableAssociation:
+  PublicSubnetBRouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      RouteTableId: !Ref RouteTable
-      SubnetId: !Ref SubnetB
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnetB
+
+  # ----------- Private --------------- #
+
+  PrivateSubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [0, !GetAZs '']
+      CidrBlock: !Ref PrivateSubnetACIDR
+
+  PrivateSubnetB:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [1, !GetAZs '']
+      CidrBlock: !Ref PrivateSubnetBCIDR
+
+  ElasticIPAddress:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: VPC
+
+  NATGateway:
+   Type: AWS::EC2::NatGateway
+   Properties:
+     AllocationId: !GetAtt ElasticIPAddress.AllocationId
+     SubnetId: !Ref PublicSubnetA
+
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+
+  DefaultPrivateRoute:
+   Type: AWS::EC2::Route
+   Properties:
+     RouteTableId: !Ref PrivateRouteTable
+     DestinationCidrBlock: 0.0.0.0/0
+     NatGatewayId: !Ref NATGateway
+
+  PrivateSubnetARouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnetA
+      RouteTableId: !Ref PrivateRouteTable
+
+  PrivateSubnetBRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnetB
+      RouteTableId: !Ref PrivateRouteTable
+
 
 Outputs:
-  SupportSubnets:
-    Value: !Join [ ",", [ !Ref SubnetA, !Ref SubnetB ] ]
-    Export:
-      Name: SupportSubnets
   SupportVPC:
     Value: !Ref VPC
     Export:
       Name: SupportVPC
+  SupportVPCCIDR:
+    Value: !Ref VpcCIDR
+    Export:
+      Name: SupportVPCCIDR
+  SupportPublicSubnets:
+    Value: !Join [ ",", [ !Ref PublicSubnetA, !Ref PublicSubnetB ] ]
+    Export:
+      Name: SupportPublicSubnets
+  SupportPrivateSubnets:
+    Value: !Join [ ",", [ !Ref PrivateSubnetA, !Ref PrivateSubnetB ] ]
+    Export:
+      Name: SupportPrivateSubnets

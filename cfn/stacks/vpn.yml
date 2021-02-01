@@ -1,0 +1,124 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Resources:
+
+  SecurityGroupEC2Instance:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: SG for EC2 Instance
+      VpcId: !ImportValue SupportVPC
+      # Despite this security group containing no ingress rules, Session
+      # Manager can still provide shell access
+      SecurityGroupEgress:
+        - Description: allow outbound HTTPS to the VPC for SSM Agent
+          CidrIp: 0.0.0.0/0
+          FromPort: 443
+          ToPort: 443
+          IpProtocol: tcp
+        - Description: allow outbound connections to MySQL
+          CidrIp: 0.0.0.0/0
+          FromPort: 3306
+          ToPort: 3306
+          IpProtocol: tcp
+        - Description: allow outbound HTTP connections to the web for updates
+          CidrIp: 0.0.0.0/0
+          FromPort: 80
+          ToPort: 80
+          IpProtocol: tcp
+
+  SecurityGroupEndpoint:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: SG for VPC Endpoints
+      VpcId: !ImportValue SupportVPC
+      SecurityGroupIngress:
+        # The SSM Agent connects to Session Manager over TCP 443
+        - Description: allow inbound HTTPS from the EC2 instance
+          SourceSecurityGroupId: !Ref SecurityGroupEC2Instance
+          FromPort: 443
+          ToPort: 443
+          IpProtocol: tcp
+      SecurityGroupEgress:
+        # The SSM Agent connects to Session Manager over TCP 443
+        - Description: allow outbound HTTPS to the VPC
+          CidrIp: !ImportValue SupportVPCCIDR
+          FromPort: 443
+          ToPort: 443
+          IpProtocol: tcp
+
+  SSMEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.ssm
+      VpcId: !ImportValue SupportVPC
+      SubnetIds: !Split [",", !ImportValue SupportPrivateSubnets]
+      SecurityGroupIds:
+        - !Ref SecurityGroupEndpoint
+      VpcEndpointType: Interface
+      PrivateDnsEnabled: True
+
+  SSMMessagesEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.ssmmessages
+      VpcId: !ImportValue SupportVPC
+      SubnetIds: !Split [",", !ImportValue SupportPrivateSubnets]
+      SecurityGroupIds:
+        - !Ref SecurityGroupEndpoint
+      VpcEndpointType: Interface
+      PrivateDnsEnabled: True
+
+  EC2MessagesEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.ec2messages
+      VpcId: !ImportValue SupportVPC
+      SubnetIds: !Split [",", !ImportValue SupportPrivateSubnets]
+      SecurityGroupIds:
+        - !Ref SecurityGroupEndpoint
+      VpcEndpointType: Interface
+      PrivateDnsEnabled: True
+
+  EC2SSMRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service: [ "ec2.amazonaws.com" ]
+            Action: "sts:AssumeRole"
+      Path: "/"
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore'
+        - 'arn:aws:iam::aws:policy/EC2InstanceConnect'
+        - 'arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy'
+
+  EC2InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: '/'
+      Roles:
+        - !Ref EC2SSMRole
+
+  VPNInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0b7620baf68f72866
+      InstanceType: t3.micro
+      IamInstanceProfile: !Ref EC2InstanceProfile
+      SecurityGroupIds:
+        - !Ref SecurityGroupEC2Instance
+      KeyName: "default"
+      SubnetId: !Select [ 0, !Split [ ",", !ImportValue SupportPrivateSubnets ] ]
+      UserData:
+        Fn::Base64:
+          !Sub |
+          #!/bin/bash
+          sudo yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
+
+Outputs:
+  MyEC2Instance:
+    Description: The instance ID for use with System Manager sessions
+    Value: !Ref VPNInstance
