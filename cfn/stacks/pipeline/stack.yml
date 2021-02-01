@@ -16,21 +16,6 @@ Parameters:
 
 Resources:
 
-  UserServicePipeline:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: ./pipeline.yml
-      Parameters:
-        Name: user-service
-        Cluster: !ImportValue SupportCluster
-        Service: !ImportValue SupportUserService
-        Repository: !ImportValue SupportUserServiceRepo
-        BuildSpecPath: user-service/buildspec.yml
-        GitHubUser: !Ref GitHubUser
-        GitHubToken: !Ref GitHubToken
-        GitHubRepo: !Ref GitHubRepo
-        GitHubBranch: !Ref GitHubBranch
-
   SupportServicePipeline:
     Type: AWS::CloudFormation::Stack
     Properties:

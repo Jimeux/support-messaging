@@ -2,7 +2,7 @@
   <div>
     <v-toolbar flat style="background: transparent; border-right: 1px solid rgba(255, 255, 255, 0.12);">
       <v-list-item-avatar size="40px" class="ml-2">
-        <v-img src="http://placekitten.com/220/220"></v-img>
+        <v-img src="https://placekitten.com/220/220"></v-img>
       </v-list-item-avatar>
       <v-toolbar-title>
         Support Messenger

@@ -1,7 +1,7 @@
 ARG SERVICE
 
 FROM golang:1.15.7-buster AS builder
-WORKDIR /go/src/github.com/Jimeux/support-messaging/${SERVICE}
+WORKDIR /go/src/github.com/Jimeux/support-system/${SERVICE}
 COPY . .
 # Build statically linked binary
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o /go/bin/service

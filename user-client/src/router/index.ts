@@ -10,13 +10,15 @@ Vue.use(VueRouter)
     name: 'Messages',
     alias: '/',
     component: MessagesLayout,
+    meta: {
+      title: 'Support Messenger',
+    },
     props: (route) => {
       return {
         userId: route.params.userId ? parseInt(route.params.userId, 10) : null
       }
     }
   },
-
   {
     path: '/about',
     name: 'About',

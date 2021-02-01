@@ -1,0 +1,63 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: MySQL stack
+
+Resources:
+  DBInstance:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceIdentifier: SupportSupportDatabase
+      Engine: MySQL
+      EngineVersion: 5.7.31
+      DBInstanceClass: db.t2.micro
+      AllocatedStorage: 20
+      StorageType: gp2
+      DBName: support
+      MasterUsername: dbuser
+      MasterUserPassword: "{{resolve:ssm-secure:support-master-user-password:1}}"
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      PubliclyAccessible: false
+      MultiAZ: false
+      PreferredBackupWindow: 18:00-18:30
+      PreferredMaintenanceWindow: sat:19:00-sat:19:30
+      AutoMinorVersionUpgrade: false
+      DBParameterGroupName: !Ref DBParameterGroup
+      VPCSecurityGroups:
+        - !Ref RDSSecurityGroup
+      CopyTagsToSnapshot: true
+      BackupRetentionPeriod: 7
+    DeletionPolicy: Delete
+
+  DBParameterGroup:
+    Type: AWS::RDS::DBParameterGroup
+    Properties:
+      Family: MySQL5.7
+      Description: Support MySQL params
+
+  RDSSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !ImportValue SupportVPC
+      GroupName: Support-support-sg
+      GroupDescription: "-"
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          CidrIp: !ImportValue SupportVPCCIDR
+
+  DBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupName: Support-support-subnet
+      DBSubnetGroupDescription: "-"
+      SubnetIds: !Split [",", !ImportValue SupportPrivateSubnets]
+
+Outputs:
+  SupportDBInstanceID:
+    Value: !Ref DBInstance
+    Export:
+      Name: SupportDBInstanceID
+  SupportDBInstanceEndpoint:
+    Value: !GetAtt DBInstance.Endpoint.Address
+    Export:
+      Name: SupportDBInstanceEndpoint

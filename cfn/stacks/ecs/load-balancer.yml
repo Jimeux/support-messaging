@@ -1,15 +1,23 @@
 ---
 AWSTemplateFormatVersion: 2010-09-09
 
-
 Parameters:
+  VpcId:
+    Type: String
   Subnets:
     Type: List<AWS::EC2::Subnet::Id>
-  VpcId:
+  DomainName:
     Type: String
 
 
 Resources:
+
+  ACMCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !Ref DomainName
+      ValidationMethod: DNS
+
   SecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -19,6 +27,10 @@ Resources:
           IpProtocol: TCP
           FromPort: 80
           ToPort: 80
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: TCP
+          FromPort: 443
+          ToPort: 443
       VpcId: !Ref VpcId
 
   LoadBalancer:
@@ -28,86 +40,65 @@ Resources:
       SecurityGroups:
         - !Ref SecurityGroup
 
+  LoadBalancerAlias:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      AliasTarget:
+        DNSName: !GetAtt LoadBalancer.DNSName
+        HostedZoneId: !GetAtt LoadBalancer.CanonicalHostedZoneID
+      HostedZoneId: Z0756761T70GF7OPBXF5
+      Name: !Ref DomainName
+      Type: A
+
+  LoadBalancerListenerHTTPS:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      Port: 443
+      Protocol: HTTPS
+      Certificates:
+        - CertificateArn: !Ref ACMCertificate
+      DefaultActions:
+        - TargetGroupArn: !Ref DefaultTargetGroup
+          Type: forward
+      LoadBalancerArn: !Ref LoadBalancer
+
   LoadBalancerListener:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
       LoadBalancerArn: !Ref LoadBalancer
       Port: 80
-      Protocol: HTTP # TODO HTTPS https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html
+      Protocol: HTTP
       DefaultActions:
-        - Type: forward
-          TargetGroupArn: !Ref UserServiceTargetGroup
+        - Type: redirect
+          RedirectConfig:
+            Host: '#{host}'
+            Path: '/#{path}'
+            Port: 443
+            Protocol: HTTPS
+            Query: '#{query}'
+            StatusCode: HTTP_301
 
-  UserServiceTargetGroup:
+  DefaultTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     DependsOn: LoadBalancer
     Properties:
-      VpcId: !Ref VpcId
-      Port: 8080
-      Protocol: HTTP # TODO HTTPS
-      Matcher:
-        HttpCode: 200-299
-      HealthCheckIntervalSeconds: 10
-      HealthCheckPath: /user
-      HealthCheckProtocol: HTTP
+      HealthCheckIntervalSeconds: 6
+      HealthCheckPath: /
+      HealthCheckProtocol: HTTPS
       HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 2
-      TargetType: ip
-      TargetGroupAttributes:
-        - Key: deregistration_delay.timeout_seconds
-          Value: 30
-
-  UserServiceListenerRule:
-    Type: AWS::ElasticLoadBalancingV2::ListenerRule
-    Properties:
-      ListenerArn: !Ref LoadBalancerListener
-      Priority: 10
-      Conditions:
-        - Field: path-pattern
-          Values:
-            - /user
-      Actions:
-        - TargetGroupArn: !Ref UserServiceTargetGroup
-          Type: forward
-
-  SupportServiceTargetGroup:
-    Type: AWS::ElasticLoadBalancingV2::TargetGroup
-    DependsOn: LoadBalancer
-    Properties:
+      Name: "no-op"
+      Port: 443
+      Protocol: HTTPS
+      UnhealthyThresholdCount: 2
       VpcId: !Ref VpcId
-      Port: 8080
-      Protocol: HTTP # TODO HTTPS
-      Matcher:
-        HttpCode: 200-299
-      HealthCheckIntervalSeconds: 10
-      HealthCheckPath: /support
-      HealthCheckProtocol: HTTP
-      HealthCheckTimeoutSeconds: 5
-      HealthyThresholdCount: 2
-      TargetType: ip
-      TargetGroupAttributes:
-        - Key: deregistration_delay.timeout_seconds
-          Value: 30
-
-  SupportServiceListenerRule:
-    Type: AWS::ElasticLoadBalancingV2::ListenerRule
-    Properties:
-      ListenerArn: !Ref LoadBalancerListener
-      Priority: 20
-      Conditions:
-        - Field: path-pattern
-          Values:
-            - /support
-      Actions:
-        - TargetGroupArn: !Ref SupportServiceTargetGroup
-          Type: forward
 
 
 Outputs:
-  UserServiceTargetGroup:
-    Value: !Ref UserServiceTargetGroup
-  SupportServiceTargetGroup:
-    Value: !Ref SupportServiceTargetGroup
+  LoadBalancer:
+    Value: !Ref LoadBalancer
+  Listener:
+    Value: !Ref LoadBalancerListenerHTTPS
   ServiceUrl:
     Description: URL of the load balancer for the sample service.
     Value: !Sub http://${LoadBalancer.DNSName}

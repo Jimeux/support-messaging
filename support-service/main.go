@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -10,19 +9,27 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
-)
 
-var (
-	port = envVar("SERVER_PORT")
+	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/middleware"
+	"github.com/go-chi/cors"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+
+	"github.com/Jimeux/support-system/support-service/config"
+	"github.com/Jimeux/support-system/support-service/src/api/handlers"
+	"github.com/Jimeux/support-system/support-service/src/app/services"
+	"github.com/Jimeux/support-system/support-service/src/domain/message"
+	"github.com/Jimeux/support-system/support-service/src/domain/user"
 )
 
 func main() {
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", Test)
+	conf := config.NewConfig()
+	router := router(conf)
 
 	server := &http.Server{
-		Addr:              ":" + port,
-		Handler:           mux,
+		Addr:              ":" + conf.Server.Port,
+		Handler:           router,
 		ReadHeaderTimeout: 20 * time.Second,
 		ReadTimeout:       40 * time.Second,
 		WriteTimeout:      60 * time.Second,
@@ -54,22 +61,57 @@ func main() {
 	<-gracefulShutdown
 }
 
-func Test(w http.ResponseWriter, r *http.Request) {
-	res := struct {
-		Msg string `json:"msg"`
-	}{Msg: fmt.Sprintf("Welcome to the Built Minimally™ deploy-with-CodePipeline© via make support-service 🙏 (%s)", r.RequestURI)}
-
-	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(res); err != nil {
-		log.Println("JSON encoding error")
+func router(conf config.Config) chi.Router {
+	db, err := gorm.Open(mysql.Open(conf.Database.String), &gorm.Config{
+		SkipDefaultTransaction: true,
+	})
+	if err != nil {
+		panic(err)
 	}
-}
 
-func envVar(key string) string {
-	val := os.Getenv(key)
-	if val == "" {
-		_, _ = fmt.Fprintf(os.Stderr, "Environment variable %s must be set.\n", key)
-		os.Exit(1)
-	}
-	return val
+	// DI
+	messageRepo := message.NewRepository(db)
+	userRepo := user.NewRepository(db)
+
+	messageSvc := services.NewMessageService(messageRepo)
+	userSvc := services.NewUserService(messageRepo, userRepo)
+
+	messageHandler := handlers.NewMessageHandler(messageSvc)
+	userHandler := handlers.NewUserHandler(userSvc)
+
+	// Router
+	r := chi.NewRouter()
+
+	// Middleware
+	r.Use(
+		middleware.StripSlashes,
+		middleware.Logger,
+		middleware.Timeout(60*time.Second),
+	)
+	r.Use(cors.Handler(cors.Options{
+		AllowedOrigins:   []string{conf.Server.ClientDomain},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Content-Type"},
+		ExposedHeaders:   []string{"Link"},
+		AllowCredentials: false,
+		MaxAge:           300, // Maximum value not ignored by any of major browsers
+	}))
+
+	// Routes
+	r.Get("/support", func(w http.ResponseWriter, r *http.Request) { // health check
+		w.WriteHeader(http.StatusOK)
+	})
+
+	r.Route("/support/api/v1", func(r chi.Router) {
+		r.Route("/users", func(r chi.Router) {
+			r.Get("/", userHandler.List)
+			r.Get("/{id}", userHandler.FindByID)
+			r.Get("/{id}/messages", messageHandler.FindByUserID)
+		})
+		r.Route("/messages", func(r chi.Router) {
+			r.Post("/", messageHandler.CreateMessage)
+			r.Delete("/{id}", messageHandler.DeleteByID)
+		})
+	})
+	return r
 }
